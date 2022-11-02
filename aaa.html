@@ -931,7 +931,7 @@ function fnInit(){
 	       			<ul class="tabs">
 	       				<li rel="tabCont1" class="on"><a href="javascript:void(0)" title="선택됨">ID/PW</a></li>
 	       				<li rel="pinAuth1" id="stepshow2" onclick="showPinLogin()"><a href="javascript:void(0)">핀로그인</a></li>
-	       				<li rel="tabCont3"><a href="javascript:void(0)">앱로그인</a></li>
+	       				<li rel="tabCont3"><a href="javascript:void(0)" onclick="AppAuthLogin();">앱로그인</a></li>
 	       			</ul>
 	
 	       			<!-- ID/PW -->
@@ -2305,22 +2305,19 @@ function fnDoFinCertSign() {
 		var authCheckInterval;
 		var authCheckCnt = 0;
 		function AppAuthLogin() {
-			$("#webToAppFormExec").val("getOtp");
-			svcf_Ajax2Obj(
-				$("#webToAppForm"),			
-				'/app/mobileweb/WebToApp.do',
-				function(st, data) {
-					if(data.resData.resultCode == "00") {
-						var otp = data.resData.otp;
-						openApp(otp);
-						clearInterval(authCheckInterval);
-						authCheckCnt = 0;
-						authCheckInterval = setInterval(checkAppCert, 3000);
-					}
-					else {
-						alert("요청하신 서비스가 정상 처리되지 않았습니다./n잠시 후 다시 시도하여 주시기 바랍니다./n지속해서 이 메시지가 발생하면 고객센터(1588-4000)로 문의하여 주시기 바랍니다.");
-					}
-			});
+			var url ="ispmobile://oAuth?clientId=VP&redirectUri=http%3A%2F%2F127.0.0.1%3A7799%2Fcallback%3Ftest%3D1234%26gogo%3Dqwer&scope=member&returnUri=https%3A%2F%2www.naver.com%3Ftest%3D1234%26gogo%3Dqwer"
+			var fallback = "http://daum.net"
+			var script = document.createElement('script'); 
+
+			script.onload = function() { 
+				document.location = url;
+			} 
+			script.onerror = function() { 
+				document.location = fallback;
+			} 
+			script.setAttribute('src', url); 
+
+			document.getElementsByTagName('head')[0].appendChild(script)
 		}
 		
 		function openApp(otp) {
