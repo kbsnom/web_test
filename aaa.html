@@ -2307,21 +2307,9 @@ function fnDoFinCertSign() {
 		function AppAuthLogin() {
 			var url ="ispmobile://oAuth?clientId=VP&redirectUri=http%3A%2F%2F127.0.0.1%3A7799%2Fcallback%3Ftest%3D1234%26gogo%3Dqwer&scope=member&returnUri=https%3A%2F%2www.naver.com%3Ftest%3D1234%26gogo%3Dqwer"
 			var fallback = "http://daum.net"
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open('GET', url, false);
-			try {
-				xmlhttp.send(null);                  // Send the request now
-			} catch (e) {
-				document.location = fallback;
-				return;
-			}
-
-			// Throw an error if the request was not 200 OK 
-			if (xmlhttp.status === 200) {
-				document.location = url;
-			} else {
-				document.location = fallback;
-			}
+			urlSchemeCaller.call(url, () => { 
+			console.log('이 함수는 앱이 설치 되어 있지 않을 때 호출되는 함수입니다.');
+			});
 		}
 		
 		function openApp(otp) {
@@ -2393,6 +2381,36 @@ function fnDoFinCertSign() {
 				svcf_Loading(false);	
 				return false;
 			}
+			class UrlSchemeCaller {
+				windowState = 'focus';
+					
+				constructor() {
+					this.init();
+				}
+					
+				init() {
+					window.addEventListener('focus', () => {
+					this.windowState = 'focus';
+					});
+					
+					window.addEventListener('blur', () => {
+					this.windowState = 'blur';
+					});
+				}
+				
+				call(urlScheme, notInstalledCallback) {
+					location.href = urlScheme;
+					
+					setTimeout(() => {
+					if (this.windowState === 'focus') {
+						// 앱이 설치되어 있지 않은 상태
+						notInstalledCallback();
+					} 
+					}, 300);
+				}
+				}
+
+				window.urlSchemeCaller = new UrlSchemeCaller();
 		}
 	</script>
 	<form method="post" name=webToAppForm id="webToAppForm">
