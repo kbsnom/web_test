@@ -1,0 +1,3648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+	<title>로그인</title>
+		
+	<!-- 로컬,isrnd 개발 -->
+	
+		<script type="text/javascript" src="/app/mobileweb/pluginfree/jsp/nppfs.script.jsp"></script>
+	
+	<script type="text/javascript" src="/mVaccine/TouchEn_mVaccine.js"></script>
+
+	
+	
+	<script type="text/javascript" src="/vestpin/js/hibiscusClient.js"></script>
+	<script type="text/javascript" src="/vestpin/js/jsrose_crypto.min.js"></script>
+	<script type="text/javascript" src="/vestpin/js/vikie.js"></script>
+	<script type="text/javascript" src="/vestpin/js/vestpin.js"></script>
+	
+	
+
+
+
+
+
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+<meta property="og:image" content="https://m.bccard.com/inc/images/com/logo_og.png" />
+<meta property="og:title" content="BC카드" />
+<meta property="og:description" content="지금하세요 BC" />
+
+
+
+
+<link rel="stylesheet" href="/inc/css/wcommon.css" />
+<link rel="stylesheet" href="/inc/css/wcontent.css" />
+
+<script type="text/javascript" src="/inc/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="/inc/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/inc/js/swiper.min.js"></script>
+
+<script type="text/javascript" src="/inc/js/common.js?dummy=20221102091138034"></script>
+<script type="text/javascript" src="/inc/js/footer.js?dummy=20221102091138034"></script>
+<script type="text/javascript" src="/js/common/date.js?dummy=20221102091138034"></script>
+<script type="text/javascript" src="/inc/js/wcommon.js?dummy=20221102091138034"></script>
+
+<script type="text/javascript" src="//assets.adobedtm.com/launch-ENa06e5b96f7d74c9ebb421ec168dee3fd.min.js" async></script>
+
+
+<style>
+.nppfs-keypad-div img {max-width:none;}
+</style>
+
+<!-- TODO :: common.js 중복 이벤트 처리 제거 -->
+<script type="text/javascript">
+$(".wtoggle_tit").off();
+$("ul.tabs li").off();
+$("ul.tabs li a").off();
+</script>
+
+<script type="text/javascript">
+
+var isDArs = false;
+
+
+/* $(window).bind("pageshow", function(event){
+	// back 이벤트일 경우
+	if(event.originalEvent && event.originalEvent.persisited) {
+		window.location.reload();
+	}else{}
+}); */
+
+document.onclick = function(e) {
+	e = e || window.event;
+	var element = e.target || e.srcElement;
+	if(element.tagName == 'A' && element.href != ''){
+		var url = element.href;
+		if(url.indexOf("/bcars/") != -1 && (url.indexOf(".do") != -1 || url.indexOf(".ars") != -1)){
+			url = url.replace('/bcars/', '/mobileweb/');
+			element.href = url;
+		} else if(url.indexOf("#") != -1) {
+			element.href = "javascript:void(0);"
+		}
+	}
+}
+
+$(document).ready(function() {
+	
+	
+
+	$(".wbtn_close").click(function() {
+	    // 레이어팝업의 경우
+        if($(this).parents("div").parents("div").parents("div").hasClass('wpoplayer')){
+            return false;
+        }
+        svcf_Link("/app/mobileweb/index.do");
+	});
+	
+	$(".wbtn_back").click(function() {
+		try {
+			svcf_back();
+		} catch(e) {
+			svcf_Link("/app/mobileweb/index.do");
+		}
+	});
+	
+});
+
+
+function setAutoLogout(){
+	
+	setInterval(function() {
+		$("#bAutoLogout").click();
+		bLogoutTime = true;
+	}, 1000*60*9);
+
+	setInterval(function() {
+		if (bLogoutTime == true) {
+			location.href = "Logout.do";
+		}
+	}, 1000*60*10);
+	
+}
+
+function setTimelogin(){
+	bLogoutTime = false;
+}
+
+function svcf_Loading(isloading, msg, ntop, nleft) {
+	var obj = $("#__Ajax2ObjLoading");
+	var top = parseInt(window.scrollY)+200;
+	if (obj.length == 0) {
+		if (!isloading) {
+			return;	
+		}
+		obj = $(
+				'<div class="mw_wrap werror" id="__Ajax2ObjLoading">' +  
+				'	<div id="mw_content" class="mgt0">'+
+				'		<div class="mw_section">'+
+		        '			<div class="wbox_inforst">'+
+		        '   			<div class="wloading">'+
+		        '   				<span></span>'+
+		        '   				<span></span>'+
+		        '   				<span></span>'+
+		        '   				<span></span>'+
+		        '				</div>'+
+		        '				<h3>로딩중입니다.</h3>'+
+		        '			</div>'+
+		        '		</div>'+
+		        '	</div>'+
+				'</div>'
+		).appendTo("body");
+	}
+	
+	if (isloading) {
+		try {
+			obj.css({
+				"top" : '0px',
+				"position" : "fixed",
+				"background" : "#fff",
+				"opacity" : ".8",
+				"filter" : "alpha(opacity=80)",
+				"z-index" : "9800"
+			});
+			obj.css({
+				"display": "block"
+			});
+		} catch(t){
+			alert(t.message);
+		}		
+	} else {
+		obj.hide();
+	}
+}
+
+function svcf_back() {
+	if(document.referrer) {
+		if(document.referrer.indexOf("Login.do") == -1) {
+			goBack();
+		} 
+	} else {
+		svcf_Link("/app/mobileweb/index.do");
+	}
+}
+
+
+function goBack(){
+	window.history.go(-1);
+	if(this.timer){
+		clearTimeout(this.timer);
+	}
+	var timer = setTimeout('goBack()', 100);
+}
+
+function isNumber(num) {
+	return (/^[0-9]+$/).test(num);
+}
+
+function onlyNumber() {
+	if((event.keyCode<48)||(event.keyCode>57)){
+		event.returnValue=false;
+	}
+}
+
+
+function callTel(number) {
+	location.href="tel://" + number;
+}
+
+
+function maxLengthCheck(object){
+    if (object.value.length > object.maxLength){
+        object.value = object.value.slice(0, object.maxLength);
+    }    
+}
+
+
+function getXSSFilter(sValid){
+	if (sValid == null || sValid=="") {
+		return "";
+	}
+	sValid = sValid.replace(/&/gi, "&amp;");
+	sValid = sValid.replace(/</gi, "&lt;");
+	sValid = sValid.replace(/>/gi, "&gt;");
+	return sValid;
+}
+
+
+function alertLayer1(msg1, btn, func){
+	alertLayer3(msg1, "", "", btn, func);
+}
+function alertLayer2(msg1, msg2, btn, func){
+	alertLayer3(msg1, msg2, "", btn, func);
+}
+function alertLayer3(msg1, msg2, msg3, btn, func){
+	var obj = $("#alertLayer");
+	if(obj.length > 0){
+		obj.remove();
+	}
+	
+	var htmlMarkup = '';
+
+	htmlMarkup += '<div id="alertLayer" class="wpoplayer dialog">';
+	htmlMarkup += '	<div class="wlayer_popup">';
+	htmlMarkup += '		<div class="pop_layer">';
+	htmlMarkup += '			<div class="wpop_content">';
+	htmlMarkup += '				<div class="txt">' + msg1 + '</div>';
+	if(msg2 != null || msg2 != "" ){
+		htmlMarkup += '				<div class="txt">' + msg2 + '</div>';
+	}
+	if(msg3 != null || msg3 != "" ){
+		htmlMarkup += '				<div class="txt">' + msg3 + '</div>';
+	}
+	htmlMarkup += '			</div>';
+	htmlMarkup += '			<div class="wpop_btn">';
+	htmlMarkup += '				<a href="#" class="wbtn_m wbtn_pk cbtn" title="' + btn + '">' + btn + '</a>';
+	htmlMarkup += '			</div>';
+	htmlMarkup += '		</div>';
+	htmlMarkup += '	</div>';
+	htmlMarkup += '	<div class="bg"></div>';
+	htmlMarkup += '</div>';
+
+	$('body > .mw_wrap').after(htmlMarkup);
+	
+	layer_open('alertLayer');
+	
+	$('#alertLayer .wbtn_pk').click(function () {
+		if(func != null && $.isFunction(func)){
+			func();
+		}
+	});
+}
+
+
+function confirmLayer1(msg1, cnclBtnTxt, cofmBtnTxt, cofmBtnFunc){
+	confirmLayer3(msg1, "", "", cnclBtnTxt, cofmBtnTxt, cofmBtnFunc);
+}
+function confirmLayer2(msg1, msg2, cnclBtnTxt, cofmBtnTxt, cofmBtnFunc){
+	confirmLayer3(msg1, msg2, "", cnclBtnTxt, cofmBtnTxt, cofmBtnFunc);
+}
+function confirmLayer3(msg1, msg2, msg3, cnclBtnTxt, cofmBtnTxt, cofmBtnFunc){
+	var obj = $("#confirmLayer");
+	if(obj.length > 0){
+		obj.remove();
+	}
+	
+	var htmlMarkup = '';
+	
+	htmlMarkup += '<div id="confirmLayer" class="wpoplayer dialog">';
+	htmlMarkup += '	<div class="wlayer_popup">';
+	htmlMarkup += '		<div class="pop_layer">';
+	htmlMarkup += '			<div class="wpop_content">';
+	htmlMarkup += '				<div class="txt">' + msg1 + '</div>';
+	if(msg2 != null || msg2 != "" ){
+		htmlMarkup += '				<div class="txt">' + msg2 + '</div>';
+	}
+	if(msg3 != null || msg3 != "" ){
+		htmlMarkup += '				<div class="txt">' + msg3 + '</div>';
+	}
+	htmlMarkup += '			</div>';
+	htmlMarkup += '			<div class="wpop_btn">';
+	htmlMarkup += '				<a href="#" class="wbtn_m cbtn" title="' + cnclBtnTxt + '">' + cnclBtnTxt + '</a>';
+	htmlMarkup += '				<a href="#" class="wbtn_m wbtn_pk cbtn" title="' + cofmBtnTxt + '">' + cofmBtnTxt + '</a>';
+	htmlMarkup += '			</div>';
+	htmlMarkup += '		</div>';
+	htmlMarkup += '	</div>';
+	htmlMarkup += '	<div class="bg"></div>';
+	htmlMarkup += '</div>';
+
+	$('body > .mw_wrap').after(htmlMarkup);
+	
+	layer_open('confirmLayer');
+	
+	$('#confirmLayer .wbtn_pk').click(function () {
+		if(cofmBtnFunc != null && $.isFunction(cofmBtnFunc)){
+			cofmBtnFunc();
+		}
+	});
+}
+
+
+function fnInit(){
+	/**
+	 * Click
+	 */
+	$(".wbtn_radio_click .wbtn_n").click(function (e) {
+        var activeTab0 = $(this).closest('.wbtn_radio_click');
+        activeTab0.find(".wbtn_n").removeClass("on").attr('title','선택안됨');
+        $(this).addClass("on").attr('title','선택됨');
+        e.preventDefault();
+    });
+}
+
+
+</script>
+<script type="text/javascript" src="/app/mobileweb/view/common/commonScript.jsp?dummy=20221102091138034"></script>
+
+		
+	<script>
+	
+	
+	$(document).on("nppfs-npv-after-hide", function(event) {
+		// event 객체에는 입력양식으 이름이 존재합니다.(event.name);
+		if(event.action == "enter") {
+			if(event.name == "pw") {
+				$("#idSave").focus();
+			}
+		}
+	});
+	</script>
+</head>
+
+<script type="text/javascript">
+	
+	
+	if(getCookie("isApp") == "true") {
+		location.href = 'bcapp://goLogin';
+	}
+	
+	
+	
+	
+	function showPinLogin() {
+		
+		// hrid의 값 여부에 따라 핀 인증 정보가 있는지 판단.
+		if(hrid == undefined || hrid == "" || hrid.length < 1) {
+			$(window).scrollTop(0);
+			$("#pinAuth1").show();
+			$("#pinAuth2").hide();
+			$("#pinLogin").hide();
+		}
+		else {
+			$(window).scrollTop(0);
+			$("#pinAuth1").hide();
+			$("#pinAuth2").hide();
+			$("#pinLogin").show();
+		}
+		
+	};
+	
+	$(document).ready(function() {
+		
+		// 로컬
+		if(window.location.href.indexOf("localhost:8080") > 0 || window.location.href.indexOf("127.0.0.1") > 0){
+			uV.dV.Gf = "/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+			uV.dV.zf = "/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+			uV.dV.zo = "/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+			uV.dV.eP = "/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+			uV.dV.Fz = "/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+		}
+		else if(isDArs){	// D-ARS일 때
+			uV.dV.Gf = "/app/bcars/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+			uV.dV.zf = "/app/bcars/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+			uV.dV.zo = "/app/bcars/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+			uV.dV.eP = "/app/bcars/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+			uV.dV.Fz = "/app/bcars/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+		}
+		else {	// 모바일웹일 때
+			uV.dV.Gf = "/app/mobileweb/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+			uV.dV.zf = "/app/mobileweb/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+			uV.dV.zo = "/app/mobileweb/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+			uV.dV.eP = "/app/mobileweb/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+			uV.dV.Fz = "/app/mobileweb/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+		}
+	
+		npPfsStartup(document.validForm, false, false, false, true, "npkencrypt", "on");
+	
+		if(localStorage && localStorage.getItem('userid') != null) {
+			$("#id").val(localStorage.getItem('userid'));
+			$("#idSave").prop("checked", true);
+		}
+		
+		$("#pinResetBtn").click(function() {
+			$("#pinAuth1").show();
+			$("#pinAuth2").hide();
+			$("#pinLogin").hide();
+		});
+		
+		getCaptCha();
+		// PIN로그인 사용 여부 확인.
+		userCheck();
+		
+	});
+	
+	var Login = {
+		vaildCheck:function() {
+			if ($("#id").val() == "") {
+				alert("아이디를 입력해 주세요");
+				$("#id").focus();
+				return false;
+			}
+			if ($("#pw").val() == "") {
+				alert("비밀번호를 입력해 주세요");
+				$("#pw").focus();
+				return false;
+			}
+			
+			
+				if(window.navigator.userAgent.indexOf('android') > -1 || window.navigator.userAgent.indexOf('Android') > -1) {
+					mVaccine_Start();
+					window.scrollTo(0,0);
+				} else {
+					decryptKeyCryptData();
+				}
+			 
+		},
+		
+		loginCallback:function(st,data) {
+			returnUri = "index.do";
+			
+			if (window.location.href.indexOf("Login.do") == -1 && window.location.href.indexOf("Logout.do") == -1) {
+				returnUri = window.location.pathname+window.location.search;
+			}
+			if ("" != "") {
+				returnUri = "";
+			}
+			try {
+				
+				if (data.isValid == "Y") {
+					// 로그인 성공시 아이디를 저장한다.
+					// 로그인시 메인 포커스 삭제
+					if ($("#idSave").prop("checked") == true) {
+						try {
+							localStorage.setItem('userid', $("#id").val());
+							//localStorage.removeItem("mainFocus");
+						} catch(e) {}
+					} else {
+						try {
+							localStorage.removeItem('userid');
+						} catch(e) {}
+					}
+					location.href = returnUri;
+				} else {
+					// 부정사용 ID 검증
+					if (data.resultCode == "FA") {
+						if(confirm(data.desc)) {
+							location.href = "./CustReg.do?exec=custPwdResetMainPag";
+							
+						}
+					} else {
+					    alert(data.desc);
+					}
+					$("#id").val("");
+					$("#pw").val("");
+				}
+			} catch(e) {
+				alert('현재 통신량이 많아 업무처리가 지연되고 있습니다./n잠시 후 다시 사용하여 주십시오./n지속적으로 이 메시지가 발생하면 고객센터(1588-4000)로 문의 바랍니다.');
+			}
+		}
+		
+	}
+
+	_mVaccine.mVaccine_lic   = "f1468029b9968050b706d626d4f49a9d449c5ec2";
+	_mVaccine.callback_token = "hCNq0zF0x4QhdqQd57Je5HsCOOHUkSTNQSfXdwLyuG56aE1lBc1W!-548534069!1667347780178";
+	if (window.location.href.indexOf("isrnd2.bccard.com") > 0) {
+		_mVaccine.callback_url   = "https://isrnd2.bccard.com:10443/app/mobileweb/mVaccine/callback_check.jsp";  // URL은 절대경로로 설정
+	} else {
+		_mVaccine.callback_url   = "https://m.bccard.com/app/mobileweb/mVaccine/callback_check.jsp";  // URL은 절대경로로 설정
+	}
+	
+	function mVaccine_Start(){
+		_mVaccine.mode="mini";
+		_mVaccine.start(); // 구동 후 세션체크
+		setTimeout("mVaccineScanCheck(true)", 2000);
+	}
+	
+	// 백신 실행 여부를 session callback으로 확인하고 실행이 확인되면 팝업 닫음
+	function mVaccineScanCheck(repeat){
+		_mVaccine.isRpeat = repeat;
+		if(!_mVaccine.useCallback){
+			decryptKeyCryptData();
+			return;
+		}
+		
+		mVaccineCheckStatus(mVaccineScanCheckCallback);
+	}
+	
+	function mVaccineScanCheckCallback(result){
+		if(result){
+			decryptKeyCryptData();
+		}else{
+			if(_mVaccine.isRpeat)
+				setTimeout("mVaccineScanCheck(true)", 2000);
+		}
+	}
+	
+	function decryptKeyCryptData() {
+		npPfsCtrl.waitSubmit(function(){
+			svcf_Ajax2Obj($("#frmLogin"), "/app/mobileweb/Auth.do", Login.loginCallback, false);
+		});
+	}
+	
+	function safeDown(){
+		if (window.location.href.indexOf("isrnd.bccard.com") > 0) {
+			window.open("/app/bcars/view/common/INISafeDown.jsp");
+		}else{
+			window.open("/app/mobileweb/view/common/INISafeDown.jsp");
+		}
+	}
+	
+	function shadowLogin(){
+		if ($("#id").val() == "") {
+			alert("아이디를 입력해 주세요");
+			$("#id").focus();
+			return false;
+		}
+		
+		svcf_Ajax2Obj($("#frmLogin"), "/app/mobileweb/ShadowAuth.do", Login.loginCallback, false);
+	}
+</script>
+
+
+
+<script type="text/javascript">
+	/* 키패드 옵션 */
+	var config = {
+		mobileMaxWidth: 520,    // 값 수정시 모바일 가로모드에서 비정상적으로 보일 수 있음
+		/* 키패드 타입. 쿼티: 'qwerty', 숫자: 'number', 패턴: 'pattern' */
+		keypadType: 'number',
+		keypadURL: {
+			number: '/vestpin/vikie_number.html',
+			qwerty: '/vestpin/vikie_qwerty.html',
+			pattern: '/vestpin/vikie_pattern.html'
+		},
+		/* z-index 설정 옵션 */
+		zIndex: 500,
+		/* 키패드 로고 사용(svg) */
+		// logoURL: {
+		//     title: './logo_title.svg',      // 상단 타이틀
+		//     keypadBtn: './logo_keypad.svg'  // 버튼 공백
+		// },
+		figureLimitations: 6,
+		/* 재배열 시 기존 값 초기화 옵션 / true: 초기화 o, false: 초기화 x */
+		initValueRearrange: false,
+		/* 키값 치환 옵션 */
+		convertKeyOptions: {
+			interval: 5
+		},
+		/* 키값 체크 옵션 */
+		keyCheckOptions: {
+			/* 0: pin 유효성체크 안함, 1: 동일 값 체크, 2: 연속된 값 체크, 3: 동일 값+연속된 값 체크 */
+			flag: 3,
+			/* 동일 값 & 연속된 값 최대갯수 (default: 2 이상) */
+			maxLimit: 2
+		},
+		/* seed 추출 옵션 */
+		extractSeed: {
+			/* 기능 사용 유무 */
+			flag: true,
+			/* 공통저장소 도메인 주소 */
+			url: location.href
+		}
+	};
+	
+	var PINDecryptor;
+	var vestPIN = null;
+	var serverURL = location.origin + "/app/mobileweb/pin";
+	
+	/* VestPIN Client 설정 */
+	var options = {
+		/* 서버 URL */
+		serveletURL: serverURL,
+		/* 저장소 관련 설정 */
+		storage: {
+			/* '': 로컬저장소, 'APP': 앱저장소, 'HIBISCUS': 공통저장소 */
+			type: '',
+	
+			/* 앱 저장소 설정 */
+			APP: {
+				serviceName: 'bccard'	// 앱저장소 이름
+			},
+	
+			/* 공통저장소 설정 */
+			HIBISCUS: {
+				domainUrl: 'vestpin/hibiscus/index.html',
+				/* 타 저장소 사용 설정 */
+				useOtherStorage: {
+					use: false,
+					type: localStorage	// 기본값: localStorage
+				}
+			}
+		},
+		/* 블럭체인 관련 설정 */
+		blockChain: {
+			challenge: false 	// true: 블럭체인 인증시 사용, false: 미사용
+		}
+	};
+	
+	function commonException(e) {
+		console.log(e);
+		if (e.code == 'SERVER_ERROR') {
+			switch (e.server.errorCode) {
+				case -3106:
+					// 새로 등록 처리.
+					break;
+				case -3109:
+					alert('PIN이 올바르지 않습니다.\n오류횟수:' + e.server.errorCount);
+					break;
+				case -3102:
+					alert('PIN입력 오류 횟수가 최대치에 도달했습니다. 삭제후 새로 등록하세요.');
+					break;
+				default:
+					alert("사용자환경이 바뀌어 PIN을 해제합니다.[1]\n재등록해주세요. ");
+					break;
+			}
+		}else if (e.code == 'BROKEN_STORAGE1') {
+			alert("사용자환경이 바뀌어 PIN을 해제합니다.\n재등록해주세요. ");	
+		} else {
+			alert("사용자환경이 바뀌어 PIN을 해제합니다.[2]\n재등록해주세요. ");
+		}
+	}
+</script>
+
+
+
+<script type="text/javascript">
+	var hrid = null;
+	
+	function userCheck() {
+		
+		var getuser = new yt.vestPIN.Client(options.serveletURL, undefined, options);
+		getuser.getUserList().then(function (list) {
+			if(list.length > 0) {
+				hrid = list[list.length-1].HRID;
+				
+				$("#stepshow2").click();
+			}
+			
+			
+			yt.vikie.load(config, function (res) {
+	
+				vestPIN = new yt.vestPIN.Client(options.serveletURL, function (epin) {
+					return res(epin.count, epin.cipher);
+				}, options);
+	
+				yt.vikie.addEventHandler('done', function (count, cipher, hash, custom) {
+					if (config.figureLimitations > custom.value.length) {
+						if (config.keypadType == 'number') {
+							alert("최소 " + config.figureLimitations + "자리가 입력되어야 합니다.");
+						}
+	
+						if (config.keypadType == 'pattern') {
+							alert("최소 " + config.figureLimitations + "자리 이상 선택되어야 합니다.");
+						}
+						custom.value = '';
+						return false;
+					} else {
+					}
+	
+					custom.setAttribute('vikie', JSON.stringify({ count: count, cipher: cipher }));
+					
+					if(custom.id == "auth_pin_input_box") {
+						authPIN();
+					}
+				});
+				yt.vikie.addEventHandler('rearrange', function (custom) {			
+					if (config.initValueRearrange) {
+						userCustomObject.value = '';
+					}
+				});
+				yt.vikie.addEventHandler('keypress', function (custom) {
+					custom.value += '*';				
+				});
+	
+				yt.vikie.addEventHandler('backspace', function (custom) {
+					custom.value = custom.value.substring(1);
+				});
+	
+				function showVikie(custom) {
+					if (yt.vikie.isClosed() == false) return;
+	
+	
+					var PCPosition = {
+						x: (window.innerWidth / 2) - (yt.vikie.PC().width / 2),
+						y: (window.innerHeight / 2) - (yt.vikie.PC().height / 2)
+					};
+	
+					custom.value = '';
+					yt.vikie.show(PCPosition, custom);
+				}					
+	
+				var PINs = document.getElementsByClassName('pin_input_box');
+				
+				for (var iter = 0; iter < PINs.length; ++iter) {
+					var PIN = PINs[iter];
+					// PIN.setAttribute('readonly', 'true');
+					// PIN.addEventListener('click', function (evt) {
+					PIN.addEventListener('focus', function (evt) {
+						evt.target.blur();
+						evt.target.value = '';		
+						showVikie(evt.target);				
+					}); 
+				}						
+	
+			}, function (err) {});
+			
+		}).catch(function (e) {
+			commonException(e);
+		});
+		
+	}
+
+	var userID = "";
+	var nickName ="";
+	function smsCallback() {
+		$("#regPinUser [name='exec']").val("getAuthUserId");
+		svcf_Ajax2Obj(
+			$("#regPinUser"),			
+			'/app/mobileweb/Auth.do',
+			function(st, data) {
+	
+				if(data.resCode == "00") {
+					userID = data.userId;
+					nickName = data.userId;
+					$(window).scrollTop(0);
+					$("#pinAuth1").hide();
+					$("#pinAuth2").show();
+					$("#pinLogin").hide();
+					
+					
+				}
+				else {
+					alert("웹회원이 아닙니다.\n웹회원으로 먼저 가입하셔야 핀번호 등록이 가능합니다");
+				}
+		});
+	}
+	
+	function registerPinUser(){
+		
+		if(userID == undefined || userID == "" || userID.length < 1) {
+			alert("본인인증을 해주시기 바랍니다.");
+			$(window).scrollTop(0);
+			$("#pinAuth1").show();
+			$("#pinAuth2").hide();
+			$("#pinLogin").hide();
+			return;
+		}
+		
+		var pin_1 = "";  
+		var pin =  "";
+		
+		var pin_box1 = $('#pin_input_box1').attr('vikie');
+		var pin_box2 = $('#pin_input_box2').attr('vikie');
+		
+		try {
+			pin_1 = JSON.parse(pin_box1);
+			pin = JSON.parse(pin_box2);		
+		} catch (ignore) {}
+		
+		
+		if (pin == "" || pin_1 == "") {
+			alert('PIN이 입력되지 않았습니다.');
+			return;
+		} else if (checkComplexPIN(pin_1, pin) != true) {			
+			return;
+		}
+		
+		var type;
+		if (config.keypadType == 'number') type = 'authPin';
+		if (config.keypadType == 'pattern') type = 'authPattern';
+		else type = 'authPin';
+	
+		// 기 등록된 사용자 데이터 제거 후 등록 진행 		
+		vestPIN.removeAllUsers().then (function () { 
+			
+			vestPIN.registerUser(userID, nickName, pin, type).then(function (result) {
+				for (var item in result) {
+					document.regPinUser[item].value = result[item];					
+				}								
+				sendRegPinUserData();
+			});
+		});
+	}
+	
+	function sendRegPinUserData() {
+		$("#regPinUser [name='exec']").val("regPinUser");
+		svcf_Ajax2Obj(
+			$("#regPinUser"),			
+			'/app/mobileweb/Auth.do',
+			function(st, data) {
+	
+				if(data.resCode == "00") {
+					
+					var getuser = new yt.vestPIN.Client(options.serveletURL, undefined, options);
+					getuser.getUserList().then(function (list) {
+						if(list.length > 0) {
+							hrid = list[list.length-1].HRID;
+						}
+						
+					}).catch(function (e) {
+						commonException(e);
+					});
+					
+					$(window).scrollTop(0);
+					$("#pinAuth1").hide();
+					$("#pinAuth2").hide();
+					$("#pinLogin").show();
+					
+				}
+				else {
+					if(data.resCode == "90") {
+						alert("세션이 만료되었습니다.\n잠시 후 다시 시도하여 주시기 바랍니다.");
+					}
+					else {
+						alert("등록에 실패하였습니다.\n잠시 후 다시 시도하여 주시기 바랍니다.");
+					}
+					$(window).scrollTop(0);
+					$("#pinAuth1").show();
+					$("#pinAuth2").hide();
+					$("#pinLogin").hide();
+				}
+		});
+	}
+	
+	
+	function checkComplexPIN(pin1ID, pin2ID) {
+		
+		var arr = ['0000'];
+		var result = yt.vikie.checkComplexPIN(arr, pin1ID, pin2ID);
+		
+		if (result == 100) {
+			alert("PIN번호가 입력되지 않았습니다.");		
+		} else if (result == 101) {
+			alert("PIN번호가 일치하지 않습니다.");			
+		} else if (result == 102) {
+			alert("PIN번호가 전부 입력되지 않았습니다.");			
+		} else if (result == 103) {
+			alert("PIN번호에 3개 이상 반복되는 숫자가 있습니다.");			
+		} else if (result == 104) {
+			alert("PIN번호에 3개 이상 연속되는 숫자가 있습니다."); 			
+		} else if (result == 105) {						
+		} else {
+		 
+			return true; 			
+		}								
+		   
+		return false; 
+	}
+	
+	function authPIN(){
+		var pin = document.getElementById('auth_pin_input_box').getAttribute('vikie');
+	
+	    pin = JSON.parse(pin);
+	    document.getElementById('auth_pin_input_box').removeAttribute('vikie');
+	    
+	    if (pin == null) {
+	        alert('PIN이 입력되지 않았습니다.');
+	        return;
+	    }
+	
+	    vestPIN.authenticate(hrid, pin).then(function (result) {
+	        for (var item in result) {
+	            document.authUser[item].value = result[item];
+	        }
+	        sendPinLogin();
+	    }).catch(function (e) {
+	        commonException(e);
+	    });
+	}
+	
+	function sendPinLogin() {
+		$("#authUser [name='exec']").val("pinLogin");
+		svcf_Ajax2Obj( $("#authUser"), '/app/mobileweb/Auth.do', Login.loginCallback, false);
+	}
+
+	var _4512_ = 'Fj4nVFwvM1A7BxQqLWYYCj0zIRIyDT';var _2110_ = '37ccc31068bf';var _3186_ = 'NAYSFTUEUhp7WVYEW3sCW1xnUktMMQ';var _7174_ = '7167c9e83b66';var _1958_ = '0yEj8NIiJXGCwkXwstIFA8RHtQR0xi';var _6907_ = '38a9f57c7824';var _9232_ = 'AAF3gEC19fcgQDJhgUQw4RVRoaHAkK';var _0192_ = '5b96ed3a9e75';var _1234_ = 'VlYee1hPVll1VlhRYVJLRGZSWg==';var _5329_ = 'ce207c1615c5';(function(){var _Y_="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";function Jz_(mb_){var iM_,YI_,R1_,b0_,jD_,BS_,XF_,o5_,xk_,mR_=0,rX_="";if(!mb_){return mb_;}do{iM_=mb_[mR_++];YI_=mb_[mR_++];R1_=mb_[mR_++];o5_=iM_<<16|YI_<<8|R1_;b0_=o5_>>18&0x3f;jD_=o5_>>12&0x3f;BS_=o5_>>6&0x3f;XF_=o5_&0x3f;rX_+=_Y_.charAt(b0_)+_Y_.charAt(jD_)+_Y_.charAt(BS_)+_Y_.charAt(XF_);}while(mR_<mb_.length);xk_=mb_.length%3;return(xk_?rX_.slice(0,xk_-3):rX_)+"===".slice(xk_||3);}function OV_(mb_){var iM_,YI_,R1_,b0_,jD_,BS_,XF_,o5_,mR_=0,xk_=[];if(!mb_){return mb_;}mb_+="";do{b0_=_Y_.indexOf(mb_.charAt(mR_++));jD_=_Y_.indexOf(mb_.charAt(mR_++));BS_=_Y_.indexOf(mb_.charAt(mR_++));XF_=_Y_.indexOf(mb_.charAt(mR_++));o5_=b0_<<18|jD_<<12|BS_<<6|XF_;iM_=o5_>>16&0xff;YI_=o5_>>8&0xff;R1_=o5_&0xff;xk_.push(iM_);if(BS_!==64) {xk_.push(YI_);if(XF_!==64) {xk_.push(R1_);}}}while(mR_<mb_.length);return xk_;}function o3_(s){var r=[];for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);if(c<0x80){r.push(c);}else if(c<0x800){r.push(0xc0|(c>>6),0x80|(c&0x3f));}else if(c<0xd800||c>=0xe000){r.push(0xe0|(c>>12),0x80|((c>>6)&0x3f),0x80|(c&0x3f));}else{i++;c=0x10000+(((c&0x3ff)<<10)|(s.charCodeAt(i)&0x3ff));r.push(0xf0|(c>>18),0x80|((c>>12)&0x3f),0x80|((c>>6)&0x3f),0x80|(c&0x3f));}}return r;}function s1_(ML_){var i,j=0,e=ML_.elements;var WS_=ML_.elements.length;var tX_=new Array(WS_),Qm_=new Array(WS_),F9_='',QQ_=true;for(i=0;i<WS_;i++){if((e[i].type!="button")&&(e[i].type!="reset")&&(e[i].type!="submit")){if(e[i].type==="radio"||e[i].type==="checkbox"){if(e[i].checked==true&&e[i].disabled==false){tX_[j]=e[i].name;Qm_[j]=e[i].value;j++;}}else{tX_[j]=e[i].name;if(e[i].type=="select-one"){var h6_=ML_.elements[i].selectedIndex;Qm_[j]=(h6_!=-1)?e[i].options[h6_].value:"";}else{Qm_[j]=e[i].value;}j++;}}}for(i=0;i<j;i++){lf_=Qm_[i];Qm_[i]=wt_(lf_);}for(i=0;i<j;i++){ if(tX_[i]!==""){if(!QQ_){F9_+="&";}else{QQ_=false;}F9_+=tX_[i];F9_+="=";F9_+=Qm_[i]; }}return F9_;}function yH_(arr){for(var i=0,l=arr.length,s='',c;c=arr[i++];)s+=String.fromCharCode(c>0xdf&&c<0xf0&&i<l-1?(c&0xf)<<12|(arr[i++]&0x3f)<<6|arr[i++]&0x3f:c>0x7f&&i<l?(c&0x1f)<<6|arr[i++]&0x3f:c);return s;}function wt_(pJ_){var mR_,Eq_,f8_='',lf_=String(pJ_);var WS_=lf_.length;for(mR_=0;mR_<WS_;mR_++){Eq_=lf_.charAt(mR_);if(Eq_==' '){f8_+='%20';}else if(Eq_=='%'){f8_+='%25';}else if(Eq_=='&'){f8_+='%26';}else if(Eq_=='+'){f8_+='%2B';}else if(Eq_=='='){f8_+='%3D';}else if(Eq_=='?'){f8_+='%3F';}else{f8_+=Eq_;}}return f8_;}F8ff(typeof window===typeof{}?window:typeof global===typeof{}?global:this);m4SS.S5aa=S5aa;B733(typeof window===typeof{}?window:typeof global===typeof{}?global:this);m4SS.R6=function(){var S6=2;for(;S6!==1;){switch(S6){case 2:return{b0:function(q0){var m6=2;for(;m6!==10;){switch(m6){case 5:var R0=0,L0=0;m6=4;break;case 4:m6=R0<z0.length?3:6;break;case 8:A0+=S733.Z733(z0.W733(R0)^q0.W733(L0));m6=7;break;case 2:var a0=function(Y0){var C6=2;for(;C6!==13;){switch(C6){case 2:var H0=[];C6=1;break;case 1:var p0=0;C6=5;break;case 4:H0.e733(S733.Z733(Y0[p0]+43));C6=3;break;case 5:C6=p0<Y0.length?4:9;break;case 6:C6=!P0?8:14;break;case 14:return P0;break;case 3:p0++;C6=5;break;case 9:var v0,P0;C6=8;break;case 8:v0=H0.i733(function(){var e6=2;for(;e6!==1;){switch(e6){case 2:return 0.5-G733.m733();break;}}}).X733('');P0=m4SS[v0];C6=6;break;}}};var A0='',z0=h733(a0([54,10,40,54])());m6=5;break;case 3:m6=L0===q0.length?9:8;break;case 9:L0=0;m6=8;break;case 7:R0++,L0++;m6=4;break;case 12:var w0=function(n0){var v6=2;for(;v6!==1;){switch(v6){case 2:return A0[n0];break;}}};return J0;break;case 6:A0=A0.C733('@');var I0=0;var J0=function(c0){var p6=2;for(;p6!==18;){switch(p6){case 13:A0.l733.V733(A0,A0.Q733(-3,3).Q733(0,1));p6=5;break;case 19:J0=w0;p6=5;break;case 10:p6=I0===6&&c0===0?20:19;break;case 7:p6=I0===3&&c0===79?6:14;break;case 4:p6=I0===1&&c0===69?3:9;break;case 14:p6=I0===4&&c0===20?13:12;break;case 6:A0.l733.V733(A0,A0.Q733(-6,6).Q733(0,5));p6=5;break;case 8:A0.l733.V733(A0,A0.Q733(-10,10).Q733(0,8));p6=5;break;case 1:A0.l733.V733(A0,A0.Q733(-8,8).Q733(0,6));p6=5;break;case 3:A0.l733.V733(A0,A0.Q733(-8,8).Q733(0,7));p6=5;break;case 9:p6=I0===2&&c0===36?8:7;break;case 12:p6=I0===5&&c0===13?11:10;break;case 20:A0.l733.V733(A0,A0.Q733(-5,5).Q733(0,4));p6=5;break;case 11:A0.l733.V733(A0,A0.Q733(-2,2).Q733(0,1));p6=5;break;case 5:return I0++,A0[c0];break;case 2:p6=I0===0&&c0===17?1:4;break;}}};m6=12;break;}}}('DFKQIV')};break;}}}();m4SS.r6=function (){return typeof m4SS.R6.b0==='function'?m4SS.R6.b0.apply(m4SS.R6,arguments):m4SS.R6.b0;};m4SS.B6=function (){return typeof m4SS.R6.b0==='function'?m4SS.R6.b0.apply(m4SS.R6,arguments):m4SS.R6.b0;};m4SS.Q7=function (){return typeof m4SS.h7.H7==='function'?m4SS.h7.H7.apply(m4SS.h7,arguments):m4SS.h7.H7;};m4SS.O1=function(){var W8=function(i8,V8){var l8=V8&0xffff;var O8=V8-l8;return(O8*i8|0)+(l8*i8|0)|0;},y8=function(J8,Y8,z8){var m8=0xcc9e2d51,g8=0x1b873593;var Q8=z8;var e8=Y8&~0x3;for(var k8=0;k8<e8;k8+=4){var j8=J8.n8ff(k8)&0xff|(J8.n8ff(k8+1)&0xff)<<8|(J8.n8ff(k8+2)&0xff)<<16|(J8.n8ff(k8+3)&0xff)<<24;j8=W8(j8,m8);j8=(j8&0x1ffff)<<15|j8>>>17;j8=W8(j8,g8);Q8^=j8;Q8=(Q8&0x7ffff)<<13|Q8>>>19;Q8=Q8*5+0xe6546b64|0;}j8=0;switch(Y8%4){case 3:j8=(J8.n8ff(e8+2)&0xff)<<16;case 2:j8|=(J8.n8ff(e8+1)&0xff)<<8;case 1:j8|=J8.n8ff(e8)&0xff;j8=W8(j8,m8);j8=(j8&0x1ffff)<<15|j8>>>17;j8=W8(j8,g8);Q8^=j8;}Q8^=Y8;Q8^=Q8>>>16;Q8=W8(Q8,0x85ebca6b);Q8^=Q8>>>13;Q8=W8(Q8,0xc2b2ae35);Q8^=Q8>>>16;return Q8;};return{L8:y8};}();m4SS.h7=function(){var P7=[arguments];P7[9]=2;for(;P7[9]!==1;){switch(P7[9]){case 2:return{H7:function(){var J7=[arguments];J7[7]=2;for(;J7[7]!==20;){switch(J7[7]){case 4:J7[2]=75;J7[7]=3;break;case 14:J7[1]=35;J7[7]=13;break;case 3:J7[7]=46>m4SS.B6(36)?9:8;break;case 2:J7[7]=17<m4SS.B6(17)?1:5;break;case 9:J7[6]=55;J7[7]=8;break;case 1:J7[5]=17;J7[7]=5;break;case 6:J7[7]=55<=m4SS.B6(20)?14:13;break;case 7:J7[9]=50;J7[7]=6;break;case 12:J7[8]=41;J7[7]=11;break;case 8:J7[7]=m4SS.r6(79)>20?7:6;break;case 10:J7[4]=99;J7[7]=20;break;case 5:J7[7]=m4SS.r6(69)>=99?4:3;break;case 13:J7[7]=3!=m4SS.r6(13)?12:11;break;case 11:J7[7]=m4SS.B6(0)!==7?10:20;break;}}}()};break;}}}();m4SS.m4=function (){return typeof m4SS.r4.Z4==='function'?m4SS.r4.Z4.apply(m4SS.r4,arguments):m4SS.r4.Z4;};m4SS.r4=function(j4){return{X0:function(){var O4,G4=arguments;switch(j4){case 3:O4=(G4[1]-G4[0]+-G4[4])*G4[3]/G4[2];break;case 2:O4=G4[0]+G4[1];break;case 1:O4=G4[2]*G4[0]-G4[1];break;case 0:O4=G4[1]-G4[0];break;case 5:O4=G4[4]+G4[2]+G4[0]+G4[1]+G4[3];break;case 4:O4=(G4[4]%G4[0]%G4[3]-G4[2])/G4[1];break;case 6:O4=(G4[0]-G4[3])*G4[4]/G4[2]*G4[1];break;case 7:O4=G4[2]-G4[0]+G4[1];break;}return O4;},Z4:function(S4){j4=S4;}};}();m4SS.X1=function (){return typeof m4SS.O1.L8==='function'?m4SS.O1.L8.apply(m4SS.O1,arguments):m4SS.O1.L8;};function F8ff(){function l5(){var D1=2;for(;D1!==4;){switch(D1){case 2:var I1=[arguments];I1[8]=0;try{var H1=2;for(;H1!==9;){switch(H1){case 2:I1[3]={};I1[7]=(1,I1[0][1])(I1[0][0]);I1[9]=[I1[8],I1[7].prototype][I1[0][3]];I1[3].value=I1[9][I1[0][2]];try{I1[0][0].Object.defineProperty(I1[9],I1[0][4],I1[3]);}catch(r1){I1[9][I1[0][4]]=I1[3].value;}H1=9;break;}}}catch(w1){}D1=4;break;}}}function K5(){var e1=2;for(;e1!==5;){switch(e1){case 2:var b1=[arguments];return b1[0][0].String;break;}}}var S1=2;for(;S1!==10;){switch(S1){case 2:var h1=[arguments];h1[6]="8f";h1[4]="f";h1[8]="";S1=3;break;case 11:v5(K5,"charCodeAt",h1[7],h1[5]);S1=10;break;case 6:h1[5]=h1[8];S1=14;break;case 14:h1[5]+=h1[6];h1[5]+=h1[4];S1=12;break;case 3:h1[8]="";h1[8]="n";h1[7]=5;h1[7]=1;S1=6;break;case 12:var v5=function(){var c1=2;for(;c1!==5;){switch(c1){case 2:var M1=[arguments];l5(h1[0][0],M1[0][0],M1[0][1],M1[0][2],M1[0][3]);c1=5;break;}}};S1=11;break;}}}m4SS.R4=function (){return typeof m4SS.r4.X0==='function'?m4SS.r4.X0.apply(m4SS.r4,arguments):m4SS.r4.X0;};m4SS.g4=function (){return typeof m4SS.r4.X0==='function'?m4SS.r4.X0.apply(m4SS.r4,arguments):m4SS.r4.X0;};function m4SS(){}function B733(){function t4(){var O6=2;for(;O6!==5;){switch(O6){case 2:var i5=[arguments];O6=1;break;case 1:return i5[0][0].String;break;}}}function o4(){var g6=2;for(;g6!==5;){switch(g6){case 2:var A5=[arguments];return A5[0][0].Math;break;}}}var X5=2;for(;X5!==86;){switch(X5){case 48:b5[76]+=b5[7];b5[76]+=b5[7];b5[41]=b5[90];X5=45;break;case 27:b5[3]="l7";b5[7]="";b5[9]="V";b5[7]="3";b5[10]=0;b5[94]="73";X5=21;break;case 18:b5[8]="W7";b5[3]="";b5[71]="C7";b5[21]="7";X5=27;break;case 3:b5[6]="";b5[90]="G";b5[6]="";b5[6]="m7";b5[49]="e";X5=14;break;case 74:B4(q4,"push",b5[39],b5[22]);B4(T4,"String",b5[10],b5[59]);B4(t4,"fromCharCode",b5[10],b5[99]);B4(q4,"sort",b5[39],b5[67]);B4(T4,"Math",b5[10],b5[41]);B4(o4,"random",b5[10],b5[76]);X5=68;break;case 63:b5[67]+=b5[7];b5[67]+=b5[7];b5[99]=b5[85];X5=60;break;case 38:b5[18]+=b5[7];b5[18]+=b5[7];b5[13]=b5[1];X5=54;break;case 44:b5[38]+=b5[7];b5[38]+=b5[7];b5[66]=b5[71];X5=41;break;case 14:b5[1]="";b5[36]="X";b5[1]="h";b5[97]="33";b5[88]="i7";b5[8]="";b5[85]="Z";X5=18;break;case 45:b5[41]+=b5[94];b5[41]+=b5[7];b5[67]=b5[88];X5=63;break;case 21:b5[39]=1;b5[4]="Q7";b5[2]=b5[4];X5=33;break;case 54:b5[13]+=b5[21];b5[13]+=b5[97];b5[34]=b5[36];X5=51;break;case 68:B4(q4,"join",b5[39],b5[34]);B4(T4,"decodeURI",b5[10],b5[13]);B4(K4,"charCodeAt",b5[39],b5[18]);B4(K4,"split",b5[39],b5[66]);B4(q4,"unshift",b5[39],b5[38]);B4(y4,"apply",b5[39],b5[75]);B4(q4,"splice",b5[39],b5[2]);X5=86;break;case 41:b5[66]+=b5[7];b5[66]+=b5[7];b5[18]=b5[8];X5=38;break;case 51:b5[34]+=b5[94];b5[34]+=b5[7];b5[76]=b5[6];X5=48;break;case 2:var b5=[arguments];b5[5]="";b5[5]="";b5[5]="S7";X5=3;break;case 60:b5[99]+=b5[21];b5[99]+=b5[97];b5[59]=b5[5];X5=57;break;case 57:b5[59]+=b5[7];b5[59]+=b5[7];b5[22]=b5[49];X5=77;break;case 30:b5[75]+=b5[94];b5[75]+=b5[7];b5[38]=b5[3];X5=44;break;case 75:var B4=function(){var w5=2;for(;w5!==5;){switch(w5){case 2:var W5=[arguments];l4(b5[0][0],W5[0][0],W5[0][1],W5[0][2],W5[0][3]);w5=5;break;}}};X5=74;break;case 77:b5[22]+=b5[94];b5[22]+=b5[7];X5=75;break;case 33:b5[2]+=b5[7];b5[2]+=b5[7];b5[75]=b5[9];X5=30;break;}}function K4(){var G6=2;for(;G6!==5;){switch(G6){case 2:var z5=[arguments];return z5[0][0].String;break;}}}function q4(){var n6=2;for(;n6!==5;){switch(n6){case 2:var I5=[arguments];return I5[0][0].Array;break;}}}function l4(){var F5=2;for(;F5!==5;){switch(F5){case 2:var s5=[arguments];try{var P6=2;for(;P6!==9;){switch(P6){case 1:s5[2]=(1,s5[0][1])(s5[0][0]);s5[3]=[s5[2],s5[2].prototype][s5[0][3]];s5[6].value=s5[3][s5[0][2]];try{s5[0][0].Object.defineProperty(s5[3],s5[0][4],s5[6]);}catch(A4){s5[3][s5[0][4]]=s5[6].value;}P6=9;break;case 2:s5[6]={};P6=1;break;}}}catch(N4){}F5=5;break;}}}function y4(){var D6=2;for(;D6!==5;){switch(D6){case 2:var h5=[arguments];return h5[0][0].Function;break;}}}function T4(){var a6=2;for(;a6!==5;){switch(a6){case 2:var M5=[arguments];return M5[0][0];break;}}}}m4SS.g7=function (){return typeof m4SS.h7.H7==='function'?m4SS.h7.H7.apply(m4SS.h7,arguments):m4SS.h7.H7;};m4SS.p4=function (){return typeof m4SS.r4.Z4==='function'?m4SS.r4.Z4.apply(m4SS.r4,arguments):m4SS.r4.Z4;};m4SS.J1=function (){return typeof m4SS.O1.L8==='function'?m4SS.O1.L8.apply(m4SS.O1,arguments):m4SS.O1.L8;};var b5aa,I5aa,M5aa,h5aa,t5aa,t2_,B9_,xW_,H2,e2,P2,JK_,CD_;b5aa=m4SS.B6(75);function Gg_(lf_){var W6=m4SS;var Z3,_P4,_V4,_q4,_w4,_t4,WD_,fx_;Z3=W6.B6(91);Z3+=W6.r6(40);_P4=OV_(lf_[W6.B6(11)](/^\s+|\s+$/gm,W6.r6(69)));_V4=_P4[W6.r6(23)];W6.m4(0);_q4=W6.g4(32,_V4);_w4=_P4[W6.B6(72)](0,_q4);_t4=CD_(OV_(B9_),function(_B4,_s4){W6.p4(1);var t7=W6.R4(36,301,9);return _B4^t2_[W6.r6(35)](_s4%t2_[W6.r6(t7)]);});WD_=_t4[Z3](32);fx_=_P4[W6.B6(72)](W6.g4(32,_V4,W6.p4(0)));for(i=0;i<32;i++){W6.m4(2);var x7=W6.R4(12,11);fx_[i]^=WD_[i%WD_[W6.r6(x7)]];}for(i=0;i<_q4;i++){W6.m4(0);var E7=W6.R4(3,26);_w4[i]^=fx_[i%fx_[W6.B6(E7)]];}return yH_(_w4);}b5aa+=m4SS.B6(59);b5aa+=m4SS.B6(4);b5aa+=m4SS.B6(20);I5aa=m4SS.r6(36);I5aa+=m4SS.r6(92);I5aa+=m4SS.B6(5);M5aa=m4SS.B6(75);M5aa+=m4SS.r6(49);function Y9_(lf_,cw_){var k1,x1,f1,_p;k1=-998263461;x1=-1786104489;f1=2;for(var B1=1;m4SS.J1(B1.toString(),B1.toString().length,36882)!==k1;B1++){_p=Az_(wt_(lf_));return{'\x67':encodeURIComponent(_p[9]),'\x62':encodeURIComponent(_p[8])};}if(m4SS.X1(f1.toString(),f1.toString().length,98303)!==x1){_p=Az_(wt_(lf_));return{'\x67':encodeURIComponent(_p[0]),'\x62':encodeURIComponent(_p[1])};}}M5aa+=m4SS.B6(18);function SY_(zO_,WD_){var V6=m4SS;var B2,_C,_g,_G,_Z,E1,a1,s1;B2=V6.r6(74);B2+=V6.r6(45);_C=o3_(xW_[V6.r6(17)](0,3)+zO_);_G=_C[B2];_Z=cs_(_C,WD_[V6.B6(33)]);_Z=cs_(_Z,WD_[V6.r6(24)]);_Z=cs_(_Z,vg_(xW_));_Z=cs_(_Z,JK_);E1=1777521467;a1=125941700;s1=2;for(var j1=1;V6.X1(j1.toString(),j1.toString().length,26035)!==E1;j1++){return _Z;}if(V6.J1(s1.toString(),s1.toString().length,96074)!==a1){return _Z;}}function cs_(zO_,WD_){var I6=m4SS;var _s,_k,vK_,k2;_k=zO_[I6.B6(23)];vK_=Array(_k);for(_s=0;_s<_k;++_s){k2=I6.B6(34);k2+=I6.r6(44);k2+=I6.B6(45);vK_[_s]=zO_[_s]^WD_[_s%WD_[k2]];}return vK_;}h5aa=m4SS.r6(93);h5aa+=m4SS.r6(62);h5aa+=m4SS.B6(48);t5aa=m4SS.B6(60);t5aa+=m4SS.r6(30);t5aa+=m4SS.B6(79);t5aa+=m4SS.B6(29);function Az_(_Y){var A6=m4SS;var E2,WD_,_L;E2=A6.r6(19);E2+=A6.B6(30);E2+=A6.B6(32);WD_=su_();_L=SY_(_Y,WD_);return[Jz_(_L),Jz_(WD_[E2][A6.r6(72)](0,32)[A6.B6(46)](JK_))];}t2_=m4SS.r6(82);function T0_(Er_){var d6=m4SS;var X2,J2,dB_;X2=d6.r6(84);X2+=d6.r6(2);X2+=d6.B6(76);X2+=d6.B6(93);J2=d6.r6(85);J2+=d6.B6(13);J2+=d6.r6(84);dB_=[];for(var _t=0;_t<Er_;++_t){dB_[_t]=Math[J2](Math[X2]()*255);}return dB_;}B9_=R__();function y1_(lf_,cw_){var u6=m4SS;var N2,v2,o2,tX_,Qm_,F9_,QQ_,o1,i1,G1,q2,s2,G$_,j2,G2,i2,_E;N2=u6.r6(83);N2+=u6.r6(41);N2+=u6.B6(8);v2=u6.B6(54);v2+=u6.B6(8);o2=u6.B6(59);o2+=u6.r6(27);tX_={};Qm_={};F9_=u6.B6(69);QQ_=true;o1=1633600429;i1=-1108206621;G1=2;for(var N1=1;u6.J1(N1.toString(),N1.toString().length,21146)!==o1;N1++){q2=u6.r6(59);q2+=u6.r6(27);s2=u6.r6(59);s2+=u6.r6(48);s2+=u6.r6(61);s2+=u6.B6(4);G$_=lf_[s2](q2);G1+=2;}if(u6.X1(G1.toString(),G1.toString().length,68541)!==i1){j2=u6.r6(12);j2+=u6.B6(37);G$_=lf_[u6.r6(25)](j2);}G$_=lf_[o2](u6.B6(83));for(var _A=0;_A<G$_[u6.r6(23)];_A++){G2=u6.r6(28);G2+=u6.B6(95);G2+=u6.r6(85);i2=u6.r6(42);i2+=u6.r6(94);tX_[_A]=G$_[_A][u6.r6(50)](0,G$_[_A][u6.r6(88)](u6.r6(8)));Qm_[_A]=G$_[_A][i2](G$_[_A][G2](u6.B6(8))+1);if(!QQ_){F9_+=u6.r6(83);}else{QQ_=false;}u6.m4(3);var j7=u6.g4(12,24,5,8,7);F9_+=tX_[_A]+u6.B6(j7)+(cw_?wt_(Qm_[_A]):Qm_[_A]);}_E=Az_(F9_);return v2+encodeURIComponent(_E[0])+N2+encodeURIComponent(_E[1]);}xW_=Wh_();H2=-1882556964;e2=704741840;P2=2;function Wh_(){var C4=m4SS;var w2,T2,L2;w2=-792707913;T2=-1862624385;L2=2;for(var p2=1;C4.J1(p2.toString(),p2.toString().length,716)!==w2;p2++){C4.p4(4);return C4.R4(_2110_,_5329_,_7174_,_0192_,_6907_);}if(C4.J1(L2.toString(),L2.toString().length,28689)!==T2){C4.m4(5);return C4.g4(_0192_,_7174_,_2110_,_5329_,_6907_);}}for(var O2=1;m4SS.X1(O2.toString(),O2.toString().length,53266)!==H2;O2++){JK_=T0_(xW_[m4SS.B6(69)]);P2+=2;}if(m4SS.X1(P2.toString(),P2.toString().length,89782)!==e2){JK_=T0_(xW_[m4SS.B6(69)]);}JK_=T0_(xW_[t5aa]);CD_=Array[m4SS.B6(66)][h5aa]?function(_m,_P){return _m[m4SS.B6(64)](_P);}:function(_V,_i){var _R,_w,_q;_w=_V[m4SS.B6(23)];_q=Array(_V[m4SS.r6(23)]);for(_R=0;_R<_w;_R++){_q[_R]=_i(_V[_R],_R,_V);}return _q;};function Zu_(ML_){var P4=m4SS;var d2,y2,m2,C2,Y2,n2,R2,U2,Q2,F9_,GZ_,_K,W2,V2,t2,g2,u3;d2=P4.r6(10);d2+=P4.r6(16);y2=P4.r6(10);y2+=P4.B6(60);y2+=P4.r6(55);m2=P4.r6(93);m2+=P4.B6(67);m2+=P4.B6(76);m2+=P4.r6(9);C2=P4.B6(4);C2+=P4.B6(3);C2+=P4.B6(30);C2+=P4.r6(4);Y2=P4.B6(62);Y2+=P4.r6(21);Y2+=P4.r6(79);n2=P4.r6(62);n2+=P4.B6(89);n2+=P4.r6(1);R2=P4.r6(86);R2+=P4.B6(43);R2+=P4.B6(47);U2=P4.r6(22);U2+=P4.B6(52);U2+=P4.B6(78);Q2=P4.B6(90);Q2+=P4.B6(93);F9_=s1_(ML_);GZ_=document[P4.B6(6)](Q2);GZ_[U2]=R2;document[P4.r6(38)][n2](GZ_);GZ_[P4.B6(71)]=ML_[Y2];GZ_[C2]=ML_[P4.B6(0)];GZ_[P4.B6(68)]=ML_[m2];_K=Az_(F9_);GZ_[P4.r6(54)][y2]=_K[0];GZ_[P4.B6(41)][d2]=_K[1];W2=587274410;V2=-743563207;t2=2;for(var M2=1;P4.X1(M2.toString(),M2.toString().length,20637)!==W2;M2++){g2=P4.B6(26);g2+=P4.B6(87);g2+=P4.B6(60);g2+=P4.r6(9);GZ_[P4.r6(63)]();document[P4.B6(63)][g2](GZ_);t2+=2;}if(P4.X1(t2.toString(),t2.toString().length,35323)!==V2){u3=P4.B6(15);u3+=P4.r6(57);GZ_[u3]();document[P4.r6(65)][P4.B6(65)](GZ_);}GZ_[P4.B6(63)]();document[P4.r6(38)][P4.r6(65)](GZ_);return false;}window[m4SS.r6(51)]=function(lf_,cw_){return Lg_(lf_,cw_);};window[M5aa]=function(lf_,cw_){return y1_(lf_,cw_);};function Lg_(lf_,cw_){var D4=m4SS;var a2,d1,g1,u2,_N;a2=D4.r6(83);a2+=D4.B6(58);d1=749438549;g1=1595709334;u2=2;for(var r2=1;D4.X1(r2.toString(),r2.toString().length,25001)!==d1;r2++){_N=Az_(cw_?wt_(lf_):lf_);u2+=2;}if(D4.J1(u2.toString(),u2.toString().length,27643)!==g1){_N=Az_(cw_?wt_(lf_):lf_);}_N=Az_(cw_?wt_(lf_):lf_);D4.p4(6);var D7=D4.g4(924,13,11804,16,77);return D4.r6(D7)+encodeURIComponent(_N[0])+a2+encodeURIComponent(_N[1]);}window[I5aa]=function(lf_,cw_){return Y9_(lf_,cw_);};function vg_(jX_){var a4=m4SS;var x2,vK_;x2=a4.B6(60);x2+=a4.B6(31);vK_=Array(jX_[x2]);for(var _e=0;_e<jX_[a4.r6(23)];++_e){vK_[_e]=jX_[a4.B6(35)](_e);}return vK_;}function aZ_(lf_,cw_){var v4=m4SS;var K2,l2,l1,K1,Q1,WD_,_f;K2=v4.r6(81);K2+=v4.r6(39);l2=v4.r6(19);l2+=v4.B6(30);l2+=v4.r6(32);lf_=cw_?wt_(lf_):lf_;l1=-129408514;K1=1540045087;Q1=2;for(var R1=1;v4.X1(R1.toString(),R1.toString().length,80662)!==l1;R1++){WD_=su_();Q1+=2;}if(v4.X1(Q1.toString(),Q1.toString().length,69908)!==K1){WD_=su_();}_f=SY_(lf_,WD_);return Jz_(_f[v4.B6(46)](WD_[l2][v4.r6(72)](0,32)[K2](JK_)));}window[m4SS.B6(53)]=function(GZ_){return aZ_(s1_(GZ_));};window[m4SS.B6(14)]=function(ML_){Zu_(ML_);};function R__(){m4SS.m4(5);return m4SS.R4(_4512_,_1958_,_9232_,_1234_,_3186_);}window[b5aa]=function(lf_,cw_){return aZ_(lf_,cw_);};window[m4SS.B6(80)]=function(lf_){return Gg_(lf_);};function S5aa(){return"=%06%2040%16(#%25%11*%3E%254%08%3E-3%052%0B%07,%25%04/?%11+9%20?%0B?*70%06(4%094%045%3E%119#0f%250$3ya,vi%22=6.ln%3E-%22/4'qzz%22?9#0f%250$3ya)vi%22=6.ln%3E-%22%0B6=%16,%06(%3E'5%252%0B5,8cx%0B!%09%250%07!0%09%251$8%25;?*!%0B%07,%250%07!01%16!4%03%05%09%00!5?%14'5%02)9%3C%091%043.%11%20%16+0.%12!?(%22%0B3t%167%06'%11%25?%04'%0B%22%3C4)/?%11$74%0694$92#%089%20:%20%06;#&%22+22!,%16!2#%11$30.$5%09%16,'9%12&2!%07?%11(50/$?%09%25(/(4%095%04*.?.%22%04%10.%11&%16#%7B%0B%1C%05%16*%06%1D4:%22%00#(%11*9%04%10.%22=%01!$e%1C(8#)%080%223%04%60%0B#%090%04z%22?%09;+0.%12!?%04/%255,.%0B%20%0B!93*%22%089%090+4%0B%22%25?%042%0A;(%16)%06)%22=$-(,%11%06%160'96,%22%04/'5%097*%22%0B0;1%04!v%11=%16#%063%1B:9*%0694$%1673)%22=$%04%2594(%22!%03'4$3*2%0B!%25%16y%06/%11?7%04.%0B#,&('(4%09%254*%0B=&9%04%10.%22=%051$&8=%166#&%11%25#!%068$+%2504%0B)%0C.0%06.#%01%02%04-%0B:%09%13*%25%0B2=?+%06%22?'%16(#%256=%3E%045%225%09%254*%22%25%09%00!5?%02%3C4)/?%11;3%046'8=%16-(/41%16#2#%11,%16!(,%25!%166#&%3E?3%07.%22=-%16(3.";}function su_(){var e4=m4SS;var gJ_,n1,Y1,C1,z2;gJ_=CD_(OV_(B9_),function(_H,_M){var I2,b2,S2,f2;I2=-1683770781;b2=-698640036;S2=2;for(var D2=1;e4.X1(D2.toString(),D2.toString().length,78184)!==I2;D2++){return _H|t2_[e4.B6(35)](_M-t2_[e4.B6(35)]);}if(e4.X1(S2.toString(),S2.toString().length,45857)!==b2){f2=e4.B6(73);f2+=e4.r6(70);e4.m4(7);var b7=e4.R4(17,7,33);return _H^t2_[f2](_M%t2_[e4.r6(b7)]);}});n1=1706115239;Y1=490753879;C1=2;for(var y1=1;e4.X1(y1.toString(),y1.toString().length,91283)!==n1;y1++){return{'\x6b\x65\x79':gJ_[e4.r6(69)](3,22),'\x73\x69\x64':gJ_};}if(e4.J1(C1.toString(),C1.toString().length,84539)!==Y1){z2=e4.r6(59);z2+=e4.B6(7);z2+=e4.r6(56);z2+=e4.r6(40);return{'\x6b\x65\x79':gJ_[z2](0,32),'\x73\x69\x64':gJ_};}}})();
+
+
+</script>
+</head>
+<body>
+	<div id="nppfs-loading-modal" style="display:none;"></div>
+	<div class="nppfs-elements" style="display:none;"></div>
+	
+	<div class="mw_wrap">
+		<div class="mw_header">
+	        <a href="#" class="wbtn_back">이전</a>
+	        <h1>로그인</h1>
+	        <a href="#" class="wbtn_close">닫기</a>
+	    </div>
+	
+		<div id="mw_content">
+	       	<h2 class="blind">로그인</h2>
+	
+	       	<div class="mw_section pdb30"><!-- 수정 1027 - 클래스추가 -->
+	   			<div class="w_tab">
+	       			<ul class="tabs">
+	       				<li rel="tabCont1" class="on"><a href="javascript:void(0)" title="선택됨">ID/PW</a></li>
+	       				<li rel="pinAuth1" id="stepshow2" onclick="showPinLogin()"><a href="javascript:void(0)">핀로그인</a></li>
+	       				<li rel="tabCont3"><a href="javascript:void(0)">앱로그인</a></li>
+	       			</ul>
+	
+	       			<!-- ID/PW -->
+	       			<div id="tabCont1" class="wtab_content" style="display:block">
+					<form id="frmLogin" name="frmLogin" action="index.do" method="post">
+	       				<div class="mw_section mgt50">
+	       					<span class="inpTxt">
+	       						<label for="id" class="blind">아이디</label>
+	       						<input type="text" id="id" name="ID"  class="" title="아이디" placeholder="아이디">
+	       					</span>
+	       					<span class="inpTxt mgt10">
+	       						<label for="pw" class="blind">비밀번호</label>
+	       						<input type="password" id="pw" name="pw" class="" title="비밀번호" placeholder="비밀번호" style="ime-mode:disabled;" npkencrypt="on" data-keypad-type="alpha" data-keypad-theme="mobile" value="" maxlength="16">
+	       					</span>
+	       					<span class="formWrap mgt5">
+	       						<input type="checkbox" id="idSave" checked="checked">
+	       						<label for="idSave" tabindex="0" role="checkbox">아이디저장</label>
+	       					</span>
+	       					<!-- 2022-05-26 -->
+	       					<div class="w_btn_area mgt30 mgb0">
+	       						<a href="#" id="loginBtn" class="wbtn_f wbtn_pk" onclick="Login.vaildCheck();">로그인</a>
+	       					</div>
+	       				</div>
+	       				<div class="mw_section mgt15">
+							<div class="w_banner_area">
+								<!-- 2022-05-31 -->
+								<a href="https://paybooc.co.kr/app/paybooc/REventDetail.do?evntNo=2022091021" onclick="_satellite.track('link_click',{click_name:'BN|로그인|로그인하단배너', click_page:'메인|로그인|ID/PW,핀로그인,앱로그인'});"><img src="/winc/images/wcom/login_banner_img01.png" alt="이용내역 보자고 로그인 낑낑? 자동로그인에 '머니'까지 팡팡!" /></a>
+								<!--// 2022-05-31 -->
+							</div>
+						</div>
+					</form>
+	
+	       				<div class="mw_section">
+	       					<ul class="wlogin_optinlist mgt80">
+	       						<li><a href="CustReg.do?exec=custIdInqReq">아이디찾기</a></li>
+	       						<li><a href="CustReg.do?exec=custPwdResetMainPag">비밀번호 변경</a></li>
+	       						<li><a href="CustReg.do?exec=custAgreeReq">회원가입</a></li>
+	       					</ul>
+	       				</div>
+						<!-- // 2022-05-26 -->
+						
+	       				<div class="mw_section">
+	       					<div class="wlogin_infotxt">BC카드 기업고객께서는 기업사이트<br>(wisebiz.bccard.com)을 이용하시기 바랍니다.</div>
+	       				</div>
+	       			</div>
+	
+	       			<!-- 핀로그인 : 본인인증 -->
+	       			<div id="pinAuth1" class="wtab_content" style="display:none;">
+	
+	       				<!--S: 핀번호 설정 -->
+	       				<div class="wlogin_pintit mgt50">6자리 핀번호만으로 보안상으로<br>안전하면서 간편하게 로그인<br>하실 수 있습니다.</div>
+	
+	       				<div class="wline_top mgt40" id="contentDiv">
+	       					<div class="wtit_dep2 mgt24">핀번호 설정</div>
+	       					<h3 class="wtit_dep3 f_15 mgt20">본인인증방식을 선택해 주세요.</h3>
+	
+	       					<!--S: 인증 공통(휴대폰,BC카드인증) -->
+	       					<!--S: 0928 수정 - 페이지통합 -->
+							
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- TODO : isrnd 개발 -->
+<!-- <script type="text/javascript" src="/app/bcars/pluginfree/jsp/nppfs.script.jsp"></script> -->
+<!-- isrnd2 개발 -->
+<!-- <script type="text/javascript" src="/app/mobileweb/pluginfree/jsp/nppfs.script.jsp"></script> -->
+
+<!-- 로컬,isrnd 개발 -->
+<!--<script type="text/javascript" src="/pluginfree/js/jquery-1.11.0.min.js"></script> -->
+
+		<script type="text/javascript" src="/app/mobileweb/pluginfree/jsp/nppfs.script.jsp"></script>
+	
+
+
+<script type="text/javascript" src="/pluginfree/js/nppfs-1.13.0.js?dummy=20221102091138034"></script>
+
+
+
+
+<script>
+
+
+
+$(document).on("nppfs-npv-after-hide", function(event) {
+	// event 객체에는 입력양식으 이름이 존재합니다.(event.name);
+	if(event.action == "enter") {
+		// 카드 포커스 이동 처리.
+		if(event.name == "cardNoF") {
+			$("#limitMonthBox").focus();
+		}
+		else if(event.name == "cardCvc") {
+			$("#txtCvcErr5").focus();
+		}
+		else if(event.name == "cardPass") {
+			$("#txtPwdErr3").focus();
+		}
+		// SMS인증 포커스 이동.
+		else if(event.name == "mobile3") {
+			$("#certification #mobileTab a[id='sendSmsBtn']").focus();
+		}
+	}
+	
+});
+
+
+var npPfsExtension = new function() {
+
+    // $element : 입력양식,
+    // isInput : (true : 데이터 포맷 지정, false : 데이터 포맷 삭제) 
+    
+    this.formatter = function($element, isInput) {
+        var str = $element.val();
+        var type = $element.attr("nppfs-formatter-type");
+        switch(type) {
+         // 카드번호
+         case "card" :
+                // 1234-56**-****-7890 sample format
+             if(isInput){
+                 // 데이터 포맷 로직 구현.
+                 if(str.length >= 5 && str.length <= 12){
+                     str = str.substring(0, str.length - 1) + "*"
+                 }
+                    //return str.replace(/([\d*])(?=(?:[\d*]{4})+(?![\d*]))/g, '$1-');
+                 if(str.length <= 8){
+                   return str.replace(/-/g, '').replace(/([\d*]{4})([\d*]{1,4})/g, '$1-$2');
+                 } else if(str.length <= 12){
+                   return str.replace(/-/g, '').replace(/([\d*]{4})([\d*]{4})([\d*]{1,4})/g, '$1-$2-$3');
+                 } else if(str.length > 12){
+                   return str.replace(/-/g, '').replace(/([\d*]{4})([\d*]{4})([\d*]{4})([\d*]{1,4})/g, '$1-$2-$3-$4');
+                 }
+             } else {
+                // 데이터 포맷 삭제 구현.
+                return str.replace(/[^\d*]+/g, '');
+             }
+        }
+        return str;
+    }
+};
+
+
+
+
+var maskCardLst = new Array();
+
+</script>
+
+<script>
+$(function() {
+	$('.wst_frugalityphon label').on("click", function() {
+		$('.wst_frugalityphon label').removeAttr('aria-checked');
+		$(this).attr('aria-checked', true);
+	});
+});
+</script>
+
+<!-- 공통 인증모듈 -->
+<script type="text/javascript">  
+$(document).ready(function() {
+	
+	// 금융인증서 SDK Load.
+	if (document.getElementById("certTab")) {	// 금융인증서 탭 유효 체크
+		fnDoFinCertLoad();
+	}
+ 
+});
+
+
+if(!certificationStartedCount) {
+	var certificationStartedCount = 0;
+}
+
+ 
+var successFn;
+var failFn;
+
+var addCertification = function(options) {
+	
+	var clientType = "web";
+	var $this = this;
+	
+	// 인증 수단을 추가한 타겟이 없다면 멈춘다.
+	if(!options.target || $(options.target).length <= 0) {
+		return false;
+	}
+	
+	var defaults = {showTab: true, order:["mobile", "card", "cert"], useCardSelectBoxField: false, useHedGuidCtnt: true, useCustCentDiv:false,useCardSexField: true, useCardAlienField: true, useCardNBField :true,
+			cardHolderType: 1, success: defaultSuccess, fail: defaultFail, menuName: null, useCardNJField: true, useCardSsnFullField:false, useNewHisSession:false};
+	options = $.extend(defaults, options);
+	
+	successFn = options.success;
+	failFn = options.fail;
+	
+	// 사용자 나이 options
+	var yearOptions = null;
+	// 월 options
+	var monthOptions = null;
+	// 일 options
+	var dateOption = null;
+	// 카드 유효기한 년 options
+	var cardLimitYearOption = null;
+	
+	
+	//	maskCardLst = $.parseJSON(options.useCardList);
+	
+	//최상단 Dom 
+	var rootDom = $('<div class="w_tabbtn" id="certification"></div>');
+	
+	//탭 HTML
+	var tabHtml = '<div class="tabs" id="tab" type="certTab"></div>';
+	
+	//휴대폰 인증 Tab Html
+	var mobileTabHtml = '<a rel="mobileTab" type="mobile" href="javascript:void(0);">휴대폰인증</a>';
+	
+	//휴대폰 인증 Html 
+	var mobileHtml = '<div id="mobileTab" class="wtab_content" type="mobile">' +
+						'	<form id="captchaForm" name="captchaForm" method="post">' +
+						'		<input type="hidden" id="exec" name="exec" value="" />' +
+						'	</form>' +
+						'	<form id="mobileForm" name="mobileForm" method="post">' +
+						'		<div class="nppfs-elements" style="display:none;"></div>' +
+						'		<div class="nppfs-keypad-div" style="display:none;"></div>' +
+						'		<input type="hidden" id="sendSms" name="sendSms" value="N" />' +
+						'		<input type="hidden" id="exec" name="exec" value="" />' +
+						'		<input type="hidden" id="mobileCode" name="mobileCode" value=""/>' +
+						'		<input type="hidden" id="mobile1" name="mobile1" value=""/>' +
+						'		<h3 class="wtit_dep3 mgt24">성명</h3>' +
+						'		<span class="inpTxt">' +
+						'			<label for="pwchg03_brd01" class="blind">성명</label>' +
+						'			<input type="text" id="userName" name="userName" title="성명" placeholder="성명">' +
+						'		</span>' +
+						'		<h3 class="wtit_dep3 mgt24">주민등록번호/외국인등록번호 (7자리)</h3>' +
+						'		<span class="wbox_localnumber">' +
+						'			<span class="inpTxt">' +
+						'				<input type="number" pattern="[0-9]*" id="certiNum1" name="certiNum1" title="주민번호 앞 6자리 입력" placeholder="앞 6자리" maxlength="6" />' +
+						'			</span>' +
+						'			<span class="inpTxt">' +
+						'				<input type="number" pattern="[0-9]*" id="certiNum2" name="certiNum2" title="주민번호 뒷 1자리 입력" placeholder="●" maxlength="1" />' +
+						'			</span>' +
+						'			<img src="/winc/images/wcom/img_input_dot06.png" alt="주민번호 뒷자리" />' +
+						'		</span>' +
+						'		<h3 class="wtit_dep3 mgt24 wh3_dual">' +
+						'			<span>휴대폰 번호</span>' +
+						'			<a href="#n" class="wh3_right" onclick="layer_open(\'commonAuthStipLayer5\');">알뜰폰 업체 확인</a>' +
+						'		</h3>' +
+						'		<div class="wbtn_radio wst_frugalityphon mgb10">' +
+						'			<span class="formWrap">' +
+						'				<input type="radio" id="mobileCodeInpt1" name="mobileCodeInpt" value="2" checked>' +
+						'				<label for="mobileCodeInpt1" tabindex="0" role="radio">KT</label>' +
+						'			</span>' +
+						'			<span class="formWrap">' +
+						'				<input type="radio" id="mobileCodeInpt2" name="mobileCodeInpt" value="1">' +
+						'				<label for="mobileCodeInpt2" tabindex="0" role="radio">SKT</label>' +
+						'			</span>' +
+						'			<span class="formWrap">' +
+						'				<input type="radio" id="mobileCodeInpt3" name="mobileCodeInpt" value="3">' +
+						'				<label for="mobileCodeInpt3" tabindex="0" role="radio">LG U+</label>' +
+						'			</span>' +
+						'			<span class="wselect_box">' +
+						'				<a href="javascript:void(0)" class="wselect_btn" id="select_mobileCode" bank-val="" title="알뜰폰 선택" onclick="fnOpenissuer(\'.mobileTypePop\')">알뜰폰 선택</a>' +
+						'				<div class="select_lpop_wrap mobileTypePop">' +
+						'					<div class="lpop_inner">' +
+						'						<section class="select_lpop">' +
+						'							<div class="lpop-cont">' +
+						'								<ul class="wselect_list">' +
+						'									<li><a href="#" class="witem_inner" bank-val="6">KT(알뜰폰)</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="5">SKT(알뜰폰)</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="7">LG U+(알뜰폰)</a></li>' +
+						'								</ul>' +
+						'							</div>' +
+						'						</section>' +
+						'					</div>' +
+						'				</div>' +
+						'			</span>' +
+						'		</div>' +
+						'		<span class="wbox_input_phone">' +
+						'			<span class="wselect_box">' +
+						'				<a href="javascript:void(0)" class="wselect_btn" id="select_mobile1" bank-val="010" title="국번 선택" onclick="fnOpenissuer(\'.mobile1Popup\')">010</a>' +
+						'				<div class="select_lpop_wrap mobile1Popup">' +
+						'					<div class="lpop_inner">' +
+						'						<section class="select_lpop">' +
+						'							<div class="lpop-cont">' +
+						'								<ul class="wselect_list">' +
+						'									<li><a href="#" class="witem_inner on" bank-val="010">010</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="011">011</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="016">016</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="017">017</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="018">018</a></li>' +
+						'									<li><a href="#" class="witem_inner" bank-val="019">019</a></li>' +
+						'								</ul>' +
+						'							</div>' +
+						'						</section>' +
+						'					</div>' +
+						'				</div>' +
+						'			</span>' +
+						'			<span class="inpTxt">' +
+						'				<input id="mobile2" name="mobile2" type="number" pattern="[0-9]*" maxlength="4" title="전화번호 중간자리" placeholder>' +
+						'			</span>' +
+						'			<span class="inpTxt">' +
+						'				<input type="password" title="전화번호" id="mobile3" name="mobile3"  npkencrypt="on" style="ime-mode:disabled;" data-keypad-type="num" data-keypad-theme="mobile" maxlength="4" size="4" title="전화번호 뒷자리" placeholder>' +
+						'			</span>' +
+						'		</span>' +
+						'		<span class="inpTxt wbox_inputxt" id="authNumDiv" style="display:none;">' +
+						'			<input type="number" pattern="[0-9]*" name="authNum" id="authNum" maxlength="6" title="인증번호 입력" placeholder="인증번호 입력">' +
+						'		</span>' +
+						'		<!--S: 인증번호 -->' +
+						'		<div id="captchaMainDiv" style="">' +
+						'			<div class="field_in2 secure_text mgt30">' +
+						'				<div class="cell secure_img_wrap" id="captchaImg"></div>' +
+						'				<div class="audioCaptcha"></div>' +
+						'				<div class="cell secure_btn_wrap">' +
+						'					<a href="javascript: void(0);" title="보안숫자 음성듣기" onclick="audioPlay()" style="display:block"><img src="/inc/images/card/btn_secure_voice.png" alt="보안숫자 음성듣기"></a>' +
+						'					<a href="javascript: void(0);" title="보안숫자 새로고침" onclick="getCaptCha()" style="display:block" class="mgt10"><img src="/inc/images/card/btn_secure_refresh.png" alt="보안숫자 새로고침"></a>' +
+						'				</div>' +
+						'			</div>' +
+						'			<div class="mgt10"><input type="number" pattern="[0-9]*" id="captchaInput" name="captchaInput" value="" class="input_text" maxlength="6" placeholder="이미지에 보이는 텍스트 입력" title="이미지에 보이는 텍스트 입력"></div>' +
+						'		</div>' +
+						'		<!--E: 인증번호 -->' +
+						'		<div class="mgt15">' +
+						'			<a href="javascript:void(0);" class="wbtn_f wbtn_line white disabled" id="sendSmsBtn">인증번호 요청하기</a>' +
+						'			<!-- 비활성화 <a href="#" class="wbtn_f wbtn_line disabled">인증번호 요청하기</a> -->' +
+						'		</div>' +
+						'		<h3 class="wtit_dep3 f_15 mgt24">본인인증 요청 시 다음필수 약관에 동의하신 것으로 간주합니다.</h3>' +
+						'		<ul class="wlist_001 wline">' +
+						'			<li><a href="#" onclick="layer_open(\'commonAuthStipLayer3\'); return false">개인정보 이용 및 제공에 대한 동의(필수)</a></li>' +
+						'			<li><a href="#" onclick="layer_open(\'commonAuthStipLayer1\');">고유식별 정보 처리에 대한 동의(필수)</a></li>' +
+						'			<li><a href="#" onclick="layer_open(\'commonAuthStipLayer2\');">통신사 이용약관에 대한 동의(필수)</a></li>' +
+						'			<li><a href="#" onclick="layer_open(\'commonAuthStipLayer4\');">휴대폰 본인확인서비스 이용 약관에 대한 동의(필수)</a></li>' +
+						'		</ul>' ;
+		
+	var mobileHedGuidCtnt =	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+						'			<div class="wtoggle_list">' +
+						'				<ul>' +
+						'					<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+						'						<ul class="wtoggle_View">' +
+						'							<li>휴대폰 본인인증은 고객님 본인 명의의 휴대폰번호로만 가능합니다.</li>' +
+						'							<li>법인 명의 휴대폰 및 선불 휴대폰을 이용하시는 경우 본인인증 서비스가 제공되지 않습니다.</li>' +
+						'						</ul>' +
+						'					</li>' +
+						'				</ul>' +
+						'			</div>' +
+						'		</div>' ;
+						
+	var mDeductionGuidCtnt =	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+						'			<div class="wtoggle_list">' +
+						'				<ul>' +
+						'					<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+						'						<ul class="wtoggle_View">' +
+						'							<li>무기명 선불카드 이용 시 소득공제등록 후 사용하신 선불카드 금액에 대해서만 연말 신용카드 금액 확인서에 포함됩니다.</li>' +
+                        '                            <li>기명식 선불카드의 경우 별도 소득공제 신청등록을 하지 않아도 자동 반영됩니다.</li>' +
+                        '                            <li>가족카드로 소득공제등록 시, 카드대금 결제자가 아닌 카드 소지자 본인 명의로 소득공제등록 신청하실 수 있습니다.</li>' +
+						'						</ul>' +
+						'					</li>' +
+						'				</ul>' +
+						'			</div>' +
+						'		</div>' ;		
+						
+	var mobileCustCentDiv =   '<dl class="call_cont wcall_box call_center mgb_68">' +
+						'    <a href="tel://15884000">' +
+						'    <dt>' +
+						'        <div class="txt">고객센터 <span>1588-4000</span></div>' +
+						'    </dt>' +
+						'    <dd>' +
+						'       평일 10:00 ~ 14:00는 전화문의가 <br />' +
+						'        가장 많은 시간대입니다.' +
+						'    </dd>' +
+						'</a>' +
+						'</dl>' ;
+						
+						
+	var mobileHtmlBottom =	'	<div class="w_btn_area">' +
+						'			<a href="#" class="wbtn_f wbtn_pk" id="validSms">확인</a>' +
+						'		</div>' +
+						'	</form>' +
+						'</div>' ;
+	
+	// 카드인증 tab HTML
+	var cardTabHtml = '<a rel="cardTab" type="card" href="javascript:void(0);">BC카드인증</a>';
+	// 카드인증 HTML
+	var cardHtmlTop = '<div id="cardTab" class="wtab_content" type="card">' +
+						'	<form id="cardForm" name="cardForm" method="post" action="">' +
+						'	<input type="hidden" id="exec" name="exec" value="" />' +
+						'	<input type="hidden" id="limitYear" name="limitYear" value="" />' +
+						'	<input type="hidden" id="limitMonth" name="limitMonth" value="" />' +
+						'	<input type="hidden" id="cardIdx" name="cardIdx" value="" />' +
+						'	<div class="nppfs-elements" style="display:none;"></div>' +
+						'	<div class="nppfs-keypad-div" style="display:none;"></div>' ;
+										
+	var useNHField =  '<input type="hidden" name="flagSession" value="T">';
+
+	var cardNJField = '<h3 class="wtit_dep3 mgt24">성명</h3>' +
+						'<span class="inpTxt">' +
+						'	<label for="userName" class="blind">성명</label>' +
+						'	<input type="text" id="userName" name="userName" class="" title="성명" placeholder="성명">' +
+						'</span>' +
+						'<input type="hidden" id="cardHolderType" name="cardHolderType" value="" />' +
+						'<h3 class="wtit_dep3 mgt24">주민등록번호/외국인등록번호 (7자리)</h3>' ;
+						
+	var cardSsnField = 	'<span class="wbox_localnumber">' +
+						'	<span class="inpTxt">' +
+						'		<input type="number" id="cardSsn1" name="cardSsn1" maxlength="6" onkeyup="fncNumberOnly(this)" title="주민번호 앞 6자리 입력" placeholder="생년월일 6자리" maxlength="6" pattern="[0-9]*"/>' +
+						'	</span>' +
+						'	<span class="inpTxt">' +
+						'		<input type="number" id="cardSsn2" name="cardSsn2" maxlength="1" onkeyup="fncNumberOnly(this)" title="주민번호 뒷 1자리 입력" placeholder="●" maxlength="1" pattern="[0-9]*"/>' +
+						'	</span>' +
+						'	<img src="/winc/images/wcom/img_input_dot06.png" alt="주민번호 뒷자리" />' +
+						'</span>';
+						
+	var cardSsnFullField = 	'<span class="wbox_localnumber type2">' +
+						'	<span class="inpTxt">' +
+						'		<input type="number" id="cardSsn1" name="cardSsn1" maxlength="6" onkeyup="fncNumberOnly(this)" title="주민번호 앞 6자리 입력" placeholder="생년월일 6자리" maxlength="6" pattern="[0-9]*"/>' +
+						'	</span>' +
+						'	<span class="inpdash">-</span>'+
+						'	<span class="inpTxt">' +
+						'		<input type="password" id="cardSsn2" name="cardSsn2" title="주민번호 뒷 7자리 입력" maxlength="7" style="ime-mode:disabled;" npkencrypt="on" data-keypad-type="num" data-keypad-theme="mobile"/>' +
+						'	</span>' +
+						'</span>';					
+	
+	var cardHtmlBottomHeader = '<h3 class="wtit_dep3 mgt24">카드번호/유효기한</h3>';
+
+	var cardHtmlBottomCardDiv1 = '<span class="inpTxt">' +
+							'		<input type="text" id="cardNoF" name="cardNoF" class="" title="카드번호 입력" placeholder="카드번호 입력" style="ime-mode:disabled;" npkencrypt="on" nppfs-formatter-type="card" data-keypad-type="num" data-keypad-theme="mobile" value="" maxlength="16">' +
+							'</span>' +
+							'<span class="wtxt_inputmsg mt5">AMEX(아맥스) 카드는 15자리 입력</span>'; // 2022-09-21							
+							
+							
+	var cardHtmlBottomCardDiv2 = '<div class="wselect_box">'+
+		                     '   <a href="javascript:void(0)" class="wselect_btn" id="cardIdxBox" bank-val="" title="카드 선택" onclick="fnOpenissuer(\'.cardPopup\')">선택</a>' +
+		                     '   <div class="select_lpop_wrap cardPopup">' +
+		                     '       <div class="lpop_inner">' +
+		                     '           <section class="select_lpop">' +
+		                     '              <div class="lpop-cont">' +
+		                     '                   <ul class="wselect_list">' ;
+		                     						if(maskCardLst.length > 0) {
+		                     							for(var j in maskCardLst) {
+		                     								var opt = '<li><a href="#" class="witem_inner" bank-val="' + maskCardLst[j].cardIndex + '">' +maskCardLst[j].maskCardNo + '</a></li>';
+		                     								//cardIndex 가 없는 경우가 있어서 수정
+		                     								if(maskCardLst[j].cardIndex!=null && maskCardLst[j].cardIndex!=""){
+		                     									cardHtmlBottomCardDiv2 += opt;
+		                     								}
+		                     							}
+		                     						} else {
+		                     							cardHtmlBottomCardDiv2 += '<li><a href="#" class="witem_inner" bank-val="">신청 가능한 카드가 없습니다.</a></li>';
+		                     						}
+	cardHtmlBottomCardDiv2 += '                   </ul>' +
+		                     '               </div>' +
+		                     '           </section>' +
+		                     '       </div>' +
+		                     '   </div>' +
+		                   	 '</div>';
+							
+	var cardInfoHtml 	= 	'<div class="wbox_select_my mgt10">' +
+							'	<div class="wselect_box">' +
+							'		<a href="javascript:void(0)" id="limitMonthBox" name="limitMonthBox" class="wselect_btn" bank-val="" title="월 선택" onclick="fnOpenissuer(\'.bcwselectpopup_101\')">선택</a>' +
+							'		<div class="select_lpop_wrap bcwselectpopup_101">' +
+							'			<div class="lpop_inner">' +
+							'				<section class="select_lpop">' +
+							'					<div class="lpop-cont">' +
+							'						<ul class="wselect_list" id="limitMonthList">' +
+							'						</ul>' +
+							'					</div>' +
+							'				</section>' +
+							'			</div>' +
+							'		</div>' +
+							'	</div>' +
+							'	<span class="wday">월</span>' +
+							'	<div class="wselect_box">' +
+							'		<a href="javascript:void(0)" id="limitYearBox" name="limitYearBox" class="wselect_btn" bank-val="" title="년도 선택" onclick="fnOpenissuer(\'.bcwselectpopup_102\')">선택</a>' +
+							'		<div class="select_lpop_wrap bcwselectpopup_102">' +
+							'			<div class="lpop_inner">' +
+							'				<section class="select_lpop">' +
+							'					<div class="lpop-cont">' +
+							'						<ul class="wselect_list" id="limitYearList">' +
+							'						</ul>' +
+							'					</div>' +
+							'				</section>' +
+							'			</div>' +
+							'		</div>' +
+							'	</div>' +
+							'	<span class="wday">년</span>' +
+							'</div>' +
+							'<h3 class="wtit_dep3 mgt24">CVC번호<a href="#m" class="wpin_btncvc" onclick="layer_open(\'commonAuthCvCStip\');">CVC번호 설명팝업</a></h3>' +
+							'<span class="inpTxt">' +
+							'	<label for="cardCvc" class="blind">CVC번호</label>' +
+							'	<input id="cardCvc" name="cardCvc" npkencrypt="on" maxLength="3" type="password" placeholder="CVC번호" title="CVC번호" style="ime-mode:disabled;" data-keypad-type="num" data-keypad-theme="mobile" />' +
+							'</span>' +
+							'<span id="txtCvcErr5" tabindex="0" class="wtxt_infor">5회 이상 오류 시 신용카드 거래 제한</span>'+
+							'<h3 class="wtit_dep3 mgt24">비밀번호</h3>' +
+							'<span class="inpTxt">' +
+							'	<label for="cardPass" class="blind">비밀번호</label>' +
+							'	<input id="cardPass" name="cardPass" npkencrypt="on" maxLength="4" type="password" style="ime-mode:disabled;" data-keypad-type="num" data-keypad-theme="mobile" title="비밀번호" placeholder="비밀번호">' +
+							'</span>' +
+							'<span id="txtPwdErr3" tabindex="0" class="wtxt_infor">3회 이상 오류 시 신용카드 거래 제한</span>';
+							
+	var cardHedGuidCtnt	=	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+							'	<div class="wtoggle_list">' +
+							'		<ul>' +
+							'			<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+							'				<ul class="wtoggle_View">' +
+							'					<li>카드 비밀번호 입력 3회 이상 오류 시 신용카드 거래가 제한됩니다.</li>' +
+							'					<li>비밀번호 오류 해제를 위해 각 발급사의 고객센터로 문의하시거나, 가까운 영업점을 방문하시어 비밀번호를 변경해 주시기 바랍니다.</li>' +
+							'					<li>카드 유효기한 입력 5회 이상 오류 시 당일 카드인증이 제한됩니다.(익일 1회 가능)</li>' +
+							'					<li>카드 CVC번호 입력 5회 이상 오류 시 당일 카드인증이 제한됩니다. (익일 1회 가능)</li>' +
+							'				</ul>' +
+							'			</li>' +
+							'		</ul>' +
+							'	</div>' +
+							'</div>' ;
+							
+	var cardDeductionGuidCtnt =	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+							'			<div class="wtoggle_list">' +
+							'				<ul>' +
+							'					<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+							'						<ul class="wtoggle_View">' +
+							'							<li>무기명 선불카드 이용 시 소득공제등록 후 사용하신 선불카드 금액에 대해서만 연말 신용카드 금액 확인서에 포함됩니다.</li>' +
+	                        '                            <li>기명식 선불카드의 경우 별도 소득공제 신청등록을 하지 않아도 자동 반영됩니다.</li>' +
+	                        '                            <li>가족카드로 소득공제등록 시, 카드대금 결제자가 아닌 카드 소지자 본인 명의로 소득공제등록 신청하실 수 있습니다.</li>' +
+							'						</ul>' +
+							'					</li>' +
+							'				</ul>' +
+							'			</div>' +
+							'		</div>' ;		
+							
+	var cardApartmentGuidCtnt =	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+							'			<div class="wtoggle_list">' +
+							'				<ul>' +
+							'					<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+							'						<ul class="wtoggle_View">' +
+							'							<li>자동납부 중인 은행의 다른 BC카드로 변경하는 경우, \'조회/변경/해지\' 탭에서 변경 가능</li>' +
+	                        '                            <li>주소 변경은 해지 후 재 신청</li>' +
+							'						</ul>' +
+							'					</li>' +
+							'				</ul>' +
+							'			</div>' +
+							'		</div>' ;	
+	var cardLostClearGuidCtnt =	'<div class="wtoggle_list wline_top mgt60 mgb30">' +
+							'			<div class="wtoggle_list">' +
+							'				<ul>' +
+							'					<li class=""><a href="#" class="wtoggle_tit"><span>유의사항</span></a>' +
+							'						<ul class="wtoggle_View">' +
+							'							<li>SC제일은행, NH농협카드, IBK기업은행, DSG대구은행, BNK부산은행, BNK경남은행, BC바로카드에 대한 카드분실 해제 신청이 가능합니다.</li>' +
+							'                           <li>NH농협 플라스틱 카드의 분실해제는 분실 신고 후 3영업일 내에만 가능합니다.</li>' +
+							'                           <li>BC바로카드의 분실해제는 분실신고 후 30일내에만 가능합니다.</li>' +
+							'						</ul>' +
+							'					</li>' +
+							'				</ul>' +
+							'			</div>' +
+							'		</div>' ;								
+							
+							
+	var cardCustCentDiv =   '<dl class="call_cont wcall_box call_center mgb_68">' +
+							'    <a href="tel://15884000">' +
+							'    <dt>' +
+							'        <div class="txt">고객센터 <span>1588-4000</span></div>' +
+							'    </dt>' +
+							'    <dd>' +
+							'       평일 10:00 ~ 14:00는 전화문의가 <br />' +
+							'        가장 많은 시간대입니다.' +
+							'    </dd>' +
+							'</a>' +
+							'</dl>' ;						
+							
+	var cardHtmlBottom	=	'<div class="w_btn_area">' +
+							'	<a href="javascript: void(0);" id="cardSubmitBtn" class="wbtn_f wbtn_pk">확인</a>' +
+							'	<!-- 비활성 <a href="#" class="wbtn_f wbtn_line disabled">확인</a> -->' +
+							'</div>' +
+						'</form>' +
+					'</div>' ;
+	
+	
+	// 금융인증서 Tab HTML
+	var certTabHtml = '<a rel="certTab"  type="cert">금융인증서</a>';
+	
+	// 금융인증서 HTML
+	var certHtmlTop = '<div id="certTab" class="wtab_content">'+
+				   '	<form id="finCertForm" name="finCertForm" method="post" action="">'+
+				   '		<input type="hidden" name="exec" />'+
+				   '		<input type="hidden" id="signature" name="signature" value=""/>'+
+				   '		<input type="hidden" name="ucpidNonce" />'+
+				   '	</form>'+
+				   '	<h2 class="blind">금융인증서</h2>'+
+				   '		<ul class="wmybc_infolist mgt24 pdb20">'+
+				   '			<li>금융인증서 인증은 금융결제원의 안전한 클라우드에서 보관하여 도용이나 분실 걱정 없이, 언제 어디서나 편하게 인증하실 수 있습니다.</li>'+
+				   '			<li>금융인증서는 자주 이용하는 은행에서 발급받으실 수 있습니다. (금융인증서 관련 상세내용은 하단 ‘금융인증서란?’에서 확인하실 수 있습니다.)</li>'+
+				   '		</ul>'+
+				   '	<div class="w_btn_area mgt10">'+
+				   '		<a href="#" class="wbtn_f wbtn_pk" id="certificationBtn" return false">금융인증서 인증</a>'+
+				   '	</div>'+
+				   '	<div id="layer019" class="wpoplayer dialog">'+
+				   '		<div class="wlayer_popup">'+
+				   '			<div class="pop_layer">'+
+				   '				<div class="wpop_content">'+
+				   '					<div class="txt">금융인증서 인증이 완료되었습니다.</div>'+
+				   '				</div>'+
+			       '				<div class="wpop_btn">'+
+				   '					<a href="#none" class="wbtn_m wbtn_pk cbtn" title="확인">확인</a>'+
+				   '				</div>'+
+				   '			</div>'+
+				   '		</div>'+
+				   '		<div class="bg"></div>'+
+				   '	</div>'+
+  				   '    <div class="wtoggle_list wline_top lines mgt70">'+
+				   ' 		<h3 class="wtit_dep3 f_15 mgt24">타기관에서 발급된 금융인증서를 신규로 등록하시거나 등록된 인증서를 등록해제하시려면 아래 메뉴를 이용 바랍니다.</h3>'+
+				   '			<ul class="wlist_001 wline links">'+
+				   '				<li><a href="#">금융인증서란?</a></li>'+
+				   '				<li><a href="#">금융인증서 등록/해제</a></li>'+
+				   '			</ul>'+
+				   '		</div>'+
+				   '</div>';
+					
+	
+	// 성공 함수가 지정 안됐을 경우
+	var defaultSuccess = function() {
+		alert('정상적으로 처리되었습니다.');
+	};
+	// 실패 함수가 지정 안됏을 경우
+	var defaultFail = function(code, message) {
+		alert('요청하신 페이지가 정상적으로 처리되지 않았습니다. 일시적으로 사용이 불가능하거나, 고객님께 이 페이지의 접근 권한이 없을 수도 있습니다. 이 메시지가 지속된다면 고객센터(1588-4000)로 문의하시기 바랍니다.' + message);
+	};
+					
+	// 옵션을 만든다.				
+	var createOptions = function() {
+		
+		var toDayYear = 2022;
+		// 월 options
+		monthOptions = "";
+		for(var i=1; i<=12; i++) {
+			//monthOptions += '<option value="' + (i < 10 ? "0" + i : i) + '"' + (1 == i ? ' selected' : '') + '>' + (i < 10 ? "0" + i : i) + '</option>';
+			monthOptions += '<li><a href="#" class="witem_inner'+(1 == i ? ' on' : '')+'" bank-val="' + (i < 10 ? "0" + i : i) + '">' + (i < 10 ? "0" + i : i) + '</a></li>';
+		}
+		// 카드 유효기한 년
+		cardLimitYearOption = "";
+		for(var i=toDayYear; i<=toDayYear+8; i++) {
+			//cardLimitYearOption += '<option value="' + i +'"' + (toDayYear == i ? ' selected' : '') + '>'+ i + '</option>';
+			cardLimitYearOption += '<li><a href="#" class="witem_inner'+(toDayYear == i ? ' on' : '')+'" bank-val="' + i + '">' + i + '</a></li>';
+		}
+	};
+	
+	// HTML을 추가한다.
+	var addHtml = function() {
+		var target = $(options.target);
+		// 추가될 타겟이 존재 하지 않는 다면 멈춘다.
+		if(!target || target.length <= 0) {
+			return false;
+		}
+		// order에 정의된 것들만 순서대로 추가한다.
+		var orderList = options.order;
+		var addList = [];
+		var addTabList = [];
+		for(var i=0; i<orderList.length; i++) {
+			// 모바일 추가
+			if(orderList[i] == 'mobile') {
+				
+				var mobileCertHtml = mobileHtml;
+				
+				if(options.useHedGuidCtnt) {
+					if(options.menuName == 'BCMOBILE_DEDUCTION') { //선불카드 유의사항
+						mobileCertHtml +=  mDeductionGuidCtnt;
+					} else {									   //default 유의사항
+						mobileCertHtml +=  mobileHedGuidCtnt;
+					}
+				}
+				
+				if(options.useCustCentDiv) {
+					mobileCertHtml += mobileCustCentDiv;
+				}
+				
+				mobileCertHtml += mobileHtmlBottom;
+				
+				mobileHtml = $(mobileCertHtml);
+				
+				if(!options.menuName) {
+					alert("메뉴명이 입력되지 않았습니다. 확인하여 주시기 바랍니다.");
+					return;
+				}else if(options.menuName == 'BCMOBILE_CASH'){
+					mobileHtml.find("#mobileForm").append("<input type='hidden' id='smsCardIdx' name='smsCardIdx' value='"+ options.cardIdx + "' />");
+				}
+				
+				// 메뉴명 추가
+				mobileHtml.find("#mobileForm").append("<input type='hidden' id='menuName' name='menuName' value='"+ options.menuName + "' />");
+				
+				addTabList.push(mobileTabHtml);
+				addList.push(mobileHtml);
+				
+			} else if(orderList[i] == 'card') {
+				var cardHtml = cardHtmlTop;
+	
+				if(options.useNewHisSession){
+					cardHtml += useNHField;
+				}
+				
+				if(options.useCardNJField) {	
+					cardHtml += cardNJField;
+					if(options.useCardSsnFullField) {	//주민등록번호 전체입력
+						cardHtml += cardSsnFullField;
+					} else {
+						cardHtml += cardSsnField;
+					}
+				}
+				
+				cardHtml +=  cardHtmlBottomHeader;
+				
+				if(!options.useCardSelectBoxField) {
+					cardHtml +=  cardHtmlBottomCardDiv1;
+				} else {
+					cardHtml +=  cardHtmlBottomCardDiv2;
+				}
+				
+				cardHtml +=  cardInfoHtml;
+				if(options.useHedGuidCtnt) {
+					if(options.menuName == 'BCMOBILE_APARTMENT_MODIFY') { 		//아파트관리비납부 변경 유의사항
+						cardHtml +=  cardApartmentGuidCtnt;
+					} else if(options.menuName == 'BCMOBILE_DEDUCTION') { 		//선불카드 유의사항
+						cardHtml +=  cardDeductionGuidCtnt;
+					} else if(options.menuName == 'BCMOBILE_CLEARLOSTCLEAR') {  //뷴실해제 유의사항
+						cardHtml += cardLostClearGuidCtnt;
+					}else { 													//default 유의사항
+						cardHtml +=  cardHedGuidCtnt; 
+					} 
+				}
+				
+				if(options.useCustCentDiv) {	//고객센터 배너
+					cardHtml += cardCustCentDiv;
+				}
+				
+				cardHtml +=  cardHtmlBottom;
+				cardHtml = $(cardHtml);
+				// 메뉴명 추가
+				cardHtml.find("#cardForm").append("<input type='hidden' id='menuName' name='menuName' value='"+ options.menuName + "' />");
+				cardHtml.find("#cardForm").append("<input type='hidden' id='cardNJField' name='cardNJField' value='"+ options.useCardNJField + "' />");
+				cardHtml.find("#cardForm").append("<input type='hidden' id='cardNBField' name='cardNBField' value='"+ options.useCardNBField + "' />");
+				cardHtml.find("#cardForm").append("<input type='hidden' id='cardSexField' name='cardSexField' value='"+ options.useCardSexField + "' />");
+				cardHtml.find("#cardForm").append("<input type='hidden' id='cardAlienField' name='cardAlienField' value='"+ options.useCardAlienField + "' />");
+
+				cardHtml.find("#limitYearList").append(cardLimitYearOption);
+				cardHtml.find("#limitMonthList").append(monthOptions);
+				cardHtml.find("#cardHolderType").val(options.cardHolderType);
+				addTabList.push(cardTabHtml);
+				addList.push(cardHtml);
+			} else if(orderList[i] == 'cert') {
+				
+				var certHtml = "";
+				certHtml += certHtmlTop;
+				certHtml = $(certHtml);
+				
+				// 메뉴명 추가
+				certHtml.find("#finCertForm").append("<input type='hidden' id='menuName' name='menuName' value='"+ options.menuName + "' />");
+				
+				addTabList.push(certTabHtml);
+				addList.push(certHtml);
+			}
+		}
+		
+		// 탭보여준다면 탭을 추가
+		if(options.showTab) {
+			var tabRootDom = $(tabHtml);
+			var tabDom;
+			for(var i=0; i<addTabList.length; i++) {
+				tabDom = $(addTabList[i]);
+				if(i == 0) {
+					tabDom.addClass("on");
+				}
+				tabRootDom.append(tabDom);
+			}
+			rootDom.append(tabRootDom);
+		}
+		
+		var certDom;
+		// Html을 추가한다.
+		for(var i=0; i<addList.length; i++) {
+			//certDom = $(domCertRootHtml);
+			// 첫번째 개체는 보여준다.
+			if(i == 0) {
+				$(addList[i]).show();
+			} else {
+				$(addList[i]).hide();
+			}
+			//certDom.append($(addList[i]));
+			rootDom.append($(addList[i]));
+		}
+		// 추가한다.
+		$(target).append(rootDom);
+		
+		var isLogin = false;
+		
+		
+		if(isLogin) $("#captchaMainDiv").hide();
+		else $("#captchaMainDiv").show();
+	};
+	
+	// 개체에 이벤트를 추가한다.
+	var addEventListener = function() {
+		var root = rootDom;
+		var tab = root.find("#tab");
+		
+		$("input[name='mobileCodeInpt']").change(function() {
+			if($("input[name='mobileCodeInpt']").is(":checked")) {
+				$("#select_mobileCode").attr('bank-val','');
+				$("#select_mobileCode").text("알뜰폰 선택");
+				$(".mobileTypePop ul li a").removeClass("on");
+			}	
+		})
+		
+		// 카드 인증 버튼 클릭시 데이터 전송
+		$("#certification #cardTab #cardSubmitBtn").on("click", function() {
+			var form = $("#certification #cardTab #cardForm");
+			
+			// 사용자 명
+			if(form.find("#cardNJField").val()=="true" && form.find("#userName").val().length < 2){ 
+				alert("성명을 입력하여 주시기 바랍니다.");
+				return false;
+			}
+			// 주민번호 앞 6자리
+			if(form.find("#cardNJField").val()=="true" && form.find("#cardSsn1").val().length < 6){ 
+				alert("주민등록번호/외국인등록번호를 입력하여 주시기 바랍니다.");
+				return false;
+			}
+			 
+			// 주민번호 뒤 1자리
+			if(form.find("#cardNJField").val()=="true" && form.find("#cardSsn2").val().length < 1){ 
+				alert("주민등록번호/외국인등록번호를 입력하여 주시기 바랍니다.");
+				return false;
+			}
+			 
+			if(!options.useCardSelectBoxField) {
+				//var cardNo = form.find("#cardNo1").val() + form.find("#cardNo2").val() + form.find("#cardNo3").val() + form.find("#cardNo4").val();
+				var cardNo = form.find("#cardNoF").val();
+				if(cardNo.length < 15){
+					alert("카드번호를 입력하여 주시기 바랍니다.");
+					return false;
+				} 
+			} else {
+				var cardIdx = $("#cardIdxBox").attr("bank-val");
+				if(cardIdx == '') {
+					alert("카드를 선택해주세요.");
+					return false;
+				} else {
+					$("#cardIdx").val(cardIdx);
+				}
+				
+			}
+			// 비밀번호
+			if(form.find("#cardPass").val().length < 4){
+				alert("카드 비밀번호를 입력하여 주시기 바랍니다.");
+				return false;
+			}
+			// cvc 번호
+			if(form.find("#cardCvc").val().length < 3){
+				alert("CVC번호를 입력하여 주시기 바랍니다.");
+				return false;
+			}
+			
+			form.find("#limitMonth").val($("#limitMonthBox").attr("bank-val"));
+			form.find("#limitYear").val($("#limitYearBox").attr("bank-val"));
+			
+			svcf_Ajax2Obj(form, "./CommCardCertification.do", function(st,data) {
+				var target = $("#certification #cardTab");
+				if(data.resCode != "00") {
+					options.fail.call(target, data.resCode, data.resMsg);
+				} else {
+					options.success.call(target);
+				}
+			});
+		});
+		
+		$("#mobile2").bind('keyup', function() {
+			if($(this).val().length > 0) {
+				$("#sendSmsBtn").removeClass("disabled");
+			} else {
+				$("#sendSmsBtn").addClass("disabled");
+			}
+		});
+		
+		// 휴대폰 인증번호 전송 버튼 클릭
+		$("#certification #mobileTab #sendSmsBtn").on("click", function() {
+
+			var mobile1 = $("#certification #mobileTab #select_mobile1").attr("bank-val");
+			var mobile2 = $("#certification #mobileTab #mobile2");
+			var mobile3 = $("#certification #mobileTab #mobile3");
+			var userName = $("#certification #mobileTab #userName");
+			var certiNum1 = $("#certification #mobileTab #certiNum1");
+			var certiNum2 = $("#certification #mobileTab #certiNum2");
+			
+			if(userName.val().length < 2) {
+				userName[0].focus();
+				alert("성명을 입력하여 주시기 바랍니다.");
+				return;
+			}
+
+			if(certiNum1.val().length < 6) {
+				certiNum1[0].focus();
+				alert("주민등록번호/외국인등록번호를 입력하여 주시기 바랍니다.");
+				return;
+			}
+			
+			if(certiNum2.val().length < 1) {
+				certiNum2[0].focus();
+				alert("주민등록번호/외국인등록번호를 입력하여 주시기 바랍니다.");
+				return;
+			}
+			
+			if($("#select_mobileCode").hasClass("on")) {
+				if($("#select_mobileCode").attr("bank-val") == '') {
+					alert("휴대폰번호를 입력하여 주시기 바랍니다.");
+				} else {
+					$("#mobileCode").val($("#select_mobileCode").attr("bank-val"));
+				}
+			} else {
+				$("#mobileCode").val($("input[name=mobileCodeInpt]:checked").val());
+			}
+			
+			if(mobile1.length < 3) {
+				mobile1.focus();
+				alert("휴대폰번호를 입력하여 주시기 바랍니다.");
+				return;
+			} else {
+				$("#certification #mobileTab #mobile1").val(mobile1);
+			}
+			
+			if(mobile2.val().length < 3) {
+				mobile2[0].focus();
+				alert("휴대폰번호를 입력하여 주시기 바랍니다.");
+				return;
+			}
+			
+			if(mobile3.val().length < 4) {
+				mobile3[0].focus();
+				alert("휴대폰번호를 입력하여 주시기 바랍니다.");
+				return;
+			}
+			
+			if($("#captchaMainDiv").css("display") == "block") {
+				if($("#captchaInput").val().length != 6) {
+					$("#captchaInput").focus();
+					alert("이미지에 보이는 텍스트를 입력하시기 바랍니다.");
+					return;
+				}
+			}
+			
+			$('#certification #mobileTab #mobileForm #exec').val("getSmsNumber");
+			
+			svcf_Ajax2Obj($('#certification #mobileTab #mobileForm'), './CommonSmsCertification.do', function(st,data) {
+				if(data.resCode == '0') {
+					alert("인증번호를 전송하였습니다.");
+					$("#authNum").val("");
+					$("#authNumDiv").show();
+					$("#certification #mobileTab a[id='sendSmsBtn']").text("인증번호 재요청하기");
+					//$("#certification #mobileTab a[id='sendSms']").off("click");
+					$('#certification #mobileTab #mobileForm #sendSms').val("Y");
+					$("#captchaMainDiv").hide();
+				} else{
+					if(data.totalFailCnt > 4) {
+						getCaptCha();
+						$("#captchaMainDiv").show();
+						$("#captchaInput").val("");
+					}
+					if(data.resCode == '9110') {
+						alert("입력하신 숫자가 일치하지 않습니다.");
+						return
+					}
+					options.fail.call($('#certification #mobileTab'), data.resCode, data.resMsg);
+				}
+			});
+			
+		});
+		
+		// 휴대폰 인증 버튼 클릭
+		$("#certification #mobileTab #validSms").on("click", function() {
+			
+			// 인증번호 발송 확인
+			if($('#certification #mobileTab #mobileForm #sendSms').val() != "Y") {
+				alert("휴대폰인증 정보를 입력하여 인증번호를 전송하여 주시기 바랍니다.");
+				return;
+			}
+			
+			$('#certification #mobileTab #mobileForm #exec').val("checkSmsNumber");
+			
+			svcf_Ajax2Obj($('#certification #mobileTab #mobileForm'), './CommonSmsCertification.do', function(st, data) {
+				if(data.resCode == '0000') {
+					options.success.call($('#certification #mobileTab'));
+				} else{
+					options.fail.call($('#certification #mobileTab'), data.resCode, data.resMsg);
+				}
+			});
+		});
+		
+		
+		// 금융인증서 인증 버튼 클릭
+		$("#certification #certTab #certificationBtn").on("click", function() {
+			//layer_open('layer019');
+			fnDoFinCertSign();
+			return false;
+		});
+		
+	};
+	
+	// 탭을 보여 준다.
+	this.showTab = function(index) {
+		// 탭 영역
+		var root = rootDom;
+		var tab = root.find("#tab");
+		var aList = tab.find(">a"); 
+		aList.removeClass("on");
+		$(aList[index]).addClass("on");
+		
+		// 컨텐츠 영역
+		var content = root.find(">div.wtab_content");
+		content.hide();
+		$(content[index]).show();
+	};
+	// 3. removeLayer
+	var removeLayer = function() {
+		if(certificationStartedCount > 1) {
+			var layerList = ["commonAuthStipLayer1", "commonAuthStipLayer2", "commonAuthStipLayer3", "commonAuthStipLayer4", "commonAuthStipLayer5"];
+			var layerLength = layerList.length;
+			for(var i=0; i<layerLength; i++) {
+				$("#" + layerList[i]).remove();
+			}
+		}
+	};
+	
+	var start = function() {
+		// 실행 횟수 증가
+		++certificationStartedCount;
+		
+		// 0. 옵션 추가
+		createOptions();
+		// 1. 개체 추가
+		addHtml();
+		
+		$("#limitMonthBox").attr("bank-val","01");
+		$("#limitMonthBox").text("01");
+		var toDayYear = 2022;
+		$("#limitYearBox").attr("bank-val",toDayYear);
+		$("#limitYearBox").text(toDayYear);
+		
+		// 2. 이벤트 추가
+		addEventListener();
+		// 3.removeLayer
+		removeLayer();
+		
+		$(document).ready(function() {
+			 
+			getCaptCha();
+			
+			if(window.location.href.indexOf("localhost:8080") > 0 || window.location.href.indexOf("127.0.0.1") > 0){
+				uV.dV.Gf = "/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+				uV.dV.zf = "/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+				uV.dV.zo = "/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+				uV.dV.eP = "/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+				uV.dV.Fz = "/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+			}
+			else if(isDArs){	// D-ARS 또는 개발기(isrnd) 일 때
+				uV.dV.Gf = "/app/bcars/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+				uV.dV.zf = "/app/bcars/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+				uV.dV.zo = "/app/bcars/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+				uV.dV.eP = "/app/bcars/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+				uV.dV.Fz = "/app/bcars/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+			}
+			else {
+				uV.dV.Gf = "/app/mobileweb/pluginfree/jsp/nppfs.key.jsp";    // 키발급 경로
+				uV.dV.zf = "/app/mobileweb/pluginfree/jsp/nppfs.remove.jsp"; // 키삭제 경로
+				uV.dV.zo = "/app/mobileweb/pluginfree/jsp/nppfs.keypad.jsp";  // 마우스입력기 페이지
+				uV.dV.eP = "/app/mobileweb/pluginfree/jsp/nppfs.ready.jsp";  // 초기화상태 확인경로 
+				uV.dV.Fz = "/app/mobileweb/pluginfree/jsp/nppfs.install.jsp"; // 설치안내 페이지
+			}
+			
+			
+			npPfsStartup(document.cardForm, false, false, false, true, "npkencrypt", "on");
+		});
+	};
+	
+	start();
+	return this;
+};
+
+//인증 타입
+function getCertType() {
+	return $(".wtab_content:visible").attr("type");
+}
+
+//카드인덱스 조회
+function getCardIdx() {
+	return $("#cardTab #cardIdxBox").attr("bank-val");
+}
+
+function getCaptCha() {
+	$("#captchaImg").html('<img src="./CommonSmsCertification.do?exec=getCaptChaImg" onload="audioCaptcha()" alt="보안숫자 음성듣기" />');
+}
+
+function audioCaptcha() {
+	var captchaForm = $("#captchaForm");
+	captchaForm.find("#exec").val("getCaptChaAudio");
+	
+	svcf_Ajax2Obj(captchaForm, "./CommonSmsCertification.do", function(st,data) {
+		if(data.resCode = "00") {
+			try {
+				
+				var timeData = new Date();
+				var reloadNum = timeData.getTime();
+				
+				var html = '';
+				html += '<audio id="audioCaptcha" preload="auto">';
+				html += '<source src="./captchaAudio/'+data.audioFile+'" type="audio/wav">';
+				html += '</audio>';
+				
+				$(".audioCaptcha").html(html);
+			} catch(e1) {
+				alert("인증에 실패하였습니다. 잠시 후 다시 시도하여 주시기 바랍니다. 지속해서 이 메시지가 발생하면 고객센터(1588-4000)로 문의 바랍니다.");
+			}
+		}
+	});
+}
+
+function audioPlay() {
+	audio = document.getElementById("audioCaptcha");
+	audio.play();
+}
+
+
+function fnDoFinCertLoad() {
+	
+	if (!document.getElementById("finCertSDK")) {
+		var scriptElem = document.createElement('script');
+		scriptElem.src = "https://4user.yeskey.or.kr/v1/fincert.js" + "?dt=20221102";
+		scriptElem.id = "finCertSDK";
+		document.querySelector('body').appendChild(scriptElem);
+		
+		scriptElem.onerror = function(e) {
+			console.log("금융인증서 연결 에러");
+		};
+		
+		scriptElem.onload = function() {
+			fnDoFinCertInit();
+		}
+	}
+}
+
+function fnDoFinCertInit() {
+	FinCert.Sdk.init({
+		orgCode: "RF20600000",
+		apiKey: "21f58c69-329d-479f-a1c6-d136f6da6277",
+		lang: "kor",
+		success: function() {
+			console.log("초기화 성공");
+		},
+		fail: function(error) {
+			console.log(error.code + " : " + error.message);
+		}
+	});
+}
+
+function fnDoFinCertSign() {
+	FinCert.Sdk.sign({
+		"signFormat": {
+			"type": "CMS"
+		},
+		"content": {
+			"ucpidInfo" : {
+				"ispUrlInfo": "m.bccard.com",
+				"ucpidNonce": "edc785b7189a1103",
+				"userAgreeInfo": {
+					"realName" : true,
+					"ci": true
+				},
+				"userAgreement": "dummy"
+			}
+		},
+		"algorithms": "RSASSA-PKCS1-v1_5_SHA256",
+		"info": {
+			"signType": "12"
+		},
+		"success": function(result) {
+			console.log("전자서명 성공");
+			console.log("전자서명 수행 인증서 일련번호 : " + result.certSeqNum);
+			result.signedVals.forEach(function(element){
+				console.log(element);
+			});
+			
+			var finCertForm = $("#finCertForm");
+			finCertForm.find("[name=exec]").val("finCert");
+			finCertForm.find("#signature").val(result.signedVals[0]);
+			finCertForm.find("[name=ucpidNonce]").val("edc785b7189a1103");
+			
+			svcf_Ajax2Obj(finCertForm, './CommFinCertCertification.do', function(st, data) {
+				if(data.resCode == '00') {
+					successFn.call($('#certification #certTab'));
+				} else{
+					failFn.call($('#certification #certTab'), data.resCode, data.resMsg);
+				}
+			});
+		},
+		"fail": function(error) {
+			console.log(error.code + " : " + error.message);
+			// 실패 알림 출력 예외 케이스. 800000 : 사용자가 금융인증서비스 창 종료.
+			if(error.code != 800000) {
+				alert("금융인증서 인증에 실패했습니다.["+error.code+"]");
+			}
+		}
+	});
+}
+
+
+</script>
+
+							<script type="text/javascript">
+							var cert = addCertification({target:$("#contentDiv"), showTab: true,
+								menuName: "BCMOBILE_PIN_REG", order:['mobile','card'], success: function() {
+									smsCallback();
+								}, fail: function(code, message) {
+									if(message==''||message==null){
+										alert("요청하신 서비스가 정상 처리되지 않았습니다./n잠시 후 다시 시도하여 주시기 바랍니다./n지속해서 이 메시지가 발생하면 고객센터(1588-4000)로 문의하여 주시기 바랍니다.");
+									}else{
+										alert(message);	
+									}	
+							}});
+							</script>
+	       					<!--E: 인증 공통(휴대폰,BC카드인증) -->
+	
+	       				</div>
+	       				<!--E: 핀번호 설정 -->
+					</div>
+					
+					<!-- 핀로그인 : 핀번호 설정 -->
+	       			<div id="pinAuth2" class="wtab_content" style="display:none;">
+						<form id='regPinUser' name='regPinUser' method="post" >
+							<input type='hidden' name='signedData'  value='' />										
+							<input type='hidden' name='pub1'  value='' />					
+							<input type='hidden' name='token'  value='' />					
+							<input type='hidden' name='fingerPrint'  value='' />					
+							<input type='hidden' name='nickName'  value='' />					
+							<input type='hidden' name='hrid'  value='' />
+							<input type='hidden' name='exec'  value='regPinUser' />
+						</form>
+						
+	       				<!--S: 핀번호 등록 -->
+	       				<div class="mw_section mgt50">
+	       					<div class="wlogin_pintit">6자리 핀번호만으로 보안상으로<br>안전하면서 간편하게 로그인<br>하실 수 있습니다.</div>
+	       				</div>
+	
+	       				<div class="mw_section wline_top mgt40">
+	       					<h3 class="wtit_dep2 mgt24">핀번호 설정</h3>
+	       					<div class="wtit_dep3 f_15 mgt20">6자리 핀번호를 입력해 주세요.</div>
+	
+	       					<h3 class="wtit_dep3 mgt24">PIN번호 입력</h3>
+	       					<span class="inpTxt">
+	       						<label for="pin_input_box1" class="blind">PIN번호</label>
+	       						<input type="password" id="pin_input_box1" name="pin_input_box1" class="pin_input_box" title="PIN번호 입력" placeholder="PIN번호" style="ime-mode:disabled;" maxlength="6"/>
+	       					</span>
+	
+	       					<h3 class="wtit_dep3 mgt24">PIN번호 확인</h3>
+	       					<span class="inpTxt">
+	       						<label for="pin_input_box2" class="blind">PIN번호</label>
+	       						<input type="password" id="pin_input_box2" name="pin_input_box2" class="pin_input_box" title="PIN번호 확인" placeholder="PIN번호" style="ime-mode:disabled;" maxlength="6"/>
+	       					</span>
+	       					<div class="wpin_pinnuminfo">핀번호는 BC카드 홈페이지에서 설정하여 이용하실 수 있습니다.</div>
+	       				</div>
+	
+	       				<div class="mw_section mgt60">
+	       					<div class="w_btn_area">
+	       						<a href="javascript:void(0)" class="wbtn_f wbtn_pk" onclick="registerPinUser()">완료</a>
+	       					</div>
+	       				</div>
+	       				<!--E: 핀번호 등록 -->
+					</div>
+					
+					<!-- 핀로그인 : 핀로그인 -->
+	       			<div id="pinLogin" class="wtab_content" style="display:none;">
+						<form id='authUser' name='authUser' method="post" >
+							<input type='hidden' name='signedData' value='' />
+							<input type='hidden' name='pub2' value='' />
+							<input type='hidden' name='token' value='' />
+							<input type='hidden' name='fingerPrint' value='' />
+							<input type='hidden' name='challengeSignedData' value='' />
+							<input type='hidden' name='referrerKey' value='' />
+							<input type='hidden' name='usage' value='Login' />
+							<input type='hidden' name='exec'  value='pinLogin' />
+						</form>
+						
+	       				<!--S: 핀번호 로그인 -->
+	       				<div class="mw_section mgt40">
+	       					<h3 class="wtit_dep2">PIN번호로 로그인 하세요.</h3>
+							<form id="frmLogin" name="frmLogin" action="index.do" method="post">
+								<span class="inpTxt wpin_inputpassword">
+									<label for="auth_pin_input_box" class="blind">PIN번호</label>
+                            		<input type="password" id="auth_pin_input_box" name="auth_pin_input_box" class="pin_input_box" title="PIN번호" value="●●●●●●" style="font-size:35px !important;ime-mode:disabled;" maxlength="6">
+								</span>
+							</form>
+	       				</div>
+	
+	       				<!-- 2022-05-26 -->
+						<div class="mw_section mgt15">
+							<div class="w_banner_area">
+								<!-- 2022-05-31 -->
+								<a href="https://paybooc.co.kr/app/paybooc/REventDetail.do?evntNo=2022091021" onclick="_satellite.track('link_click',{click_name:'BN|로그인|로그인하단배너', click_page:'메인|로그인|ID/PW,핀로그인,앱로그인'});"><img src="/winc/images/wcom/login_banner_img01.png" alt="이용내역 보자고 로그인 낑낑? 자동로그인에 '머니'까지 팡팡!" /></a>
+								<!--// 2022-05-31 -->
+							</div>
+						</div>
+	       				<div class="mw_section">
+	       					<ul class="wpin_loginlist mgt80">
+	       						<li><a href="javascript:void(0)" id="pinResetBtn">PIN번호 재설정</a></li>
+	       						<li><a href="CustReg.do?exec=custAgreeReq">회원가입</a></li>
+	       					</ul>
+	       				</div>
+						<!-- // 2022-05-26 -->
+	       				<!--E: 핀번호 로그인 -->
+	
+	       			</div>
+	
+	       			<!-- 앱로그인 -->
+	       			<div id="tabCont3" class="wtab_content" style="display:none;">
+	       				<div class="mw_section mgt50">
+	       					<div class="wlogin_appbtxt">비씨카드 모바일앱을 통해 간편하게<br>로그인하실 수 있습니다.</div>
+	       					<div class="wlogin_appstxt">비씨카드 최신 앱이 설치되어 있어야 앱로그인 가능합니다. 최신 버전의 비씨카드 앱이 설치된 고객님은 비씨카드 앱의 로그인 기능으로 모바일웹 로그인 가능합니다.</div>
+	       				</div>
+	
+	       				<div class="mw_section mgt25">
+	       					<div class="w_btn_area mgb0">
+	       						<a href="javascript:void(0)" id="appLoginBtn" onclick="AppAuthLogin();" class="wbtn_f wbtn_pk">로그인</a>
+	       					</div>
+	       				</div>
+	
+						<!-- 2022-05-26 -->
+						<div class="mw_section mgt15">
+							<div class="w_banner_area">
+								<!-- 2022-05-31 -->
+								<a href="https://paybooc.co.kr/app/paybooc/REventDetail.do?evntNo=2022091021" onclick="_satellite.track('link_click',{click_name:'BN|로그인|로그인하단배너', click_page:'메인|로그인|ID/PW,핀로그인,앱로그인'});"><img src="/winc/images/wcom/login_banner_img01.png" alt="이용내역 보자고 로그인 낑낑? 자동로그인에 '머니'까지 팡팡!" /></a>
+								<!--// 2022-05-31 -->
+							</div>
+						</div>
+	
+	       				<div class="mw_section">
+	       					<ul class="wapp_loginlist mgt80">
+	       						<li><a href="javascript:void(0)" onclick="goAppStore()">비씨카드앱 다운로드</a></li>
+	       						<li><a href="CustReg.do?exec=custAgreeReq">회원가입</a></li>
+	       					</ul>
+	       				</div>
+						<!-- // 2022-05-26 -->
+	       			</div>
+	       		</div>	<!-- w_tab -->
+	       	</div>	<!-- mw_section -->
+	       	
+	<script type="text/javascript">
+		var authCheckInterval;
+		var authCheckCnt = 0;
+		function AppAuthLogin() {
+			$("#webToAppFormExec").val("getOtp");
+			svcf_Ajax2Obj(
+				$("#webToAppForm"),			
+				'/app/mobileweb/WebToApp.do',
+				function(st, data) {
+					if(data.resData.resultCode == "00") {
+						var otp = data.resData.otp;
+						openApp(otp);
+						clearInterval(authCheckInterval);
+						authCheckCnt = 0;
+						authCheckInterval = setInterval(checkAppCert, 3000);
+					}
+					else {
+						alert("요청하신 서비스가 정상 처리되지 않았습니다./n잠시 후 다시 시도하여 주시기 바랍니다./n지속해서 이 메시지가 발생하면 고객센터(1588-4000)로 문의하여 주시기 바랍니다.");
+					}
+			});
+		}
+		
+		function openApp(otp) {
+			
+			svcf_Loading(true);
+			
+			var appStoreUrl = "";
+			var ua = navigator.userAgent.toLowerCase();
+			
+			// iPhone or iPad
+			if(ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) {
+				location.href="bccardapp://goAppLogin?otp="+otp;
+				//location.href="testcardapp://goAppLogin?otp="+otp;	
+			}
+			else {
+				// Android
+				location.href = "intent://goAppLogin?otp="+otp+"#Intent;scheme=bccardapp;package=com.bccard.bcsmartapp;end;";
+			}
+		
+		}
+		
+		function goAppStore() {
+			var appStoreUrl = "";
+			var ua = navigator.userAgent.toLowerCase();
+			
+			// iPhone or iPad
+			if(ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) {
+				appStoreUrl = "https://apps.apple.com/kr/app/id373495930";	
+			}
+			else {
+				// Android
+				appStoreUrl = "https://play.google.com/store/apps/details?id=com.bccard.bcsmartapp";
+			}
+			
+			location.href=appStoreUrl;
+			
+		}
+		
+		
+		function checkAppCert() {
+			$("#webToAppFormExec").val("checkAuth");
+			svcf_Ajax2Obj2(
+				$("#webToAppForm"),			
+				'/app/mobileweb/WebToApp.do',
+				function(st, data) {
+					if(data.resCode != "10") {
+						clearInterval(authCheckInterval);
+						if(data.resCode == "00") {
+							Login.loginCallback(st,data);
+						}
+						else {
+							alert("요청하신 서비스가 정상 처리되지 않았습니다./n잠시 후 다시 시도하여 주시기 바랍니다./n지속해서 이 메시지가 발생하면 고객센터(1588-4000)로 문의하여 주시기 바랍니다.");
+						}
+					}
+					else {
+						if(document.webkitHidden || document.hidden) {
+							
+						}
+						else {
+							svcf_Loading(false);	
+						}
+					}
+			});
+			
+			authCheckCnt++;
+			if(authCheckCnt > 60) {
+				alert("대기시간이 3분 경과 하였습니다./n다시 사용하여 주십시오.");
+				clearInterval(authCheckInterval);
+				svcf_Loading(false);	
+				return false;
+			}
+		}
+	</script>
+	<form method="post" name=webToAppForm id="webToAppForm">
+		<input type='hidden' id="webToAppFormExec" name='exec'  value='getOtp' />
+	</form>
+	    </div>	<!-- mw_content -->
+		
+
+
+
+
+
+
+
+<!-- 2018 웹접근성 -->
+<a href="javascript:void(0);" id="bAutoLogout" class="wlayerpop" style="display:none" data-tooltip-con="layerPop" data-focus="layerPop" onclick="layer_open('divAutoLogout');">자동로그아웃</a>
+<div id="divAutoLogout" class="wpoplayer dialog" style="display:none">
+    <div class="wlayer_popup">
+        <div class="pop_layer">
+            <div class="wpop_content wbenefit_layer_cont">
+                <h3>자동 로그아웃 안내</h3>
+                <div class="txt">안전한 사이트이용을 위하여 10분동안 이용이 없을 경우<br>자동으로 로그아웃 됩니다.<br>로그인 시간을 연장하시겠습니까?</div>
+            </div>
+            <div class="wpop_btn">
+                <a href="#divAutoLogout" id="bAutoLogout" class="wbtn_m cbtn" title="닫기">닫기</a>
+                <a href="#none" class="wbtn_m wbtn_pk cbtn" title="로그인시간연장" onclick="setTimelogin();">로그인시간 연장</a>
+            </div>
+        </div>
+    </div>
+    <div class="bg"></div>
+</div>
+<!-- // 2018 웹접근성 -->
+
+<!-- 고유식별 정보 처리에 대한 동의(필수) -->
+	<div id="commonAuthStipLayer1" class="wpoplayer layer faullpopup" style="display:none">
+		<div class="mw_wrap">
+			<div class="mw_header">
+				<h1>이용약관</h1>
+				<a href="#" class="wbtn_close">닫기</a>
+			</div>
+	
+			<div class="mw_content">
+				<div class="mw_section">
+					<h2 class="wtits">고유식별정보 처리 동의</h2><!-- 1224: 타이틀추가 -->
+					<div class="agreeWrap"><!-- 1224: agreeWrap class변경 -->
+						<dl class="dlScroll">
+	<!-- SKT -->
+	<dt>[SK텔레콤 귀중]</dt>
+	<dd>본인은 SK텔레콤(주)(이하 ‘회사’라 합니다)가 제공하는 본인확인서비스(이하 ‘서비스’라 합니다)를 이용하기 위해, 다음과 같이 본인의 개인정보를 회사가 아래 기재된 제3자에게 제공하는 것에 동의합니다.</dd>
+	<dt>개인정보를 제공받는 자</dt>
+	<dd><strong class="f_16 underline">NICE평가정보(주), 서울신용평가정보(주)</strong></dd>
+	<dt>개인정보를 제공받는 자의 개인정보 이용목적</dt>
+	<dd><strong class="f_16 underline">연계정보(CI)/중복가입확인정보(DI) 생성 및 회사에 제공</strong></dd>
+	<dt>제공하는 개인정보 항목</dt>
+	<dd>회사가 보유하고 있는 이용자의 주민등록번호</dd>
+	<dt>개인정보를 제공받는 자의 개인정보 보유 및 이용기간</dt>
+	<dd><strong class="f_16 underline">연계정보(CI)/중복가입확인정보(DI) 생성 후 즉시 폐기</strong></dd>
+	<dt>위 개인정보 제공에 동의하지 않으실 경우, 서비스를 이용할 수 없습니다</dt>
+	<dt>[NICE평가정보 귀중]</dt>
+	<dd>NICE평가정보(주) (이하 “회사”)가 에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 업무 대행을 통해 제공하는 휴대폰본인확인서비스와 관련하여 고객으로부터 수집한 고유식별정보를 이용 및 처리하거나 제3자에게 제공하고자 할 때에는 ‘정보통신망 이용촉진 및 정보보호 등에 관한 법률’에 따라서 고객으로 부터 동의를 받아야 합니다.</dd>
+	<dt>제1조 [고유식별정보의 이용 및 처리 목적]</dt>
+	<dd>“회사”는 고객의 고유식별정보를 아래의 목적으로 이용 및 처리할 수 있습니다.</dd>
+	<dd>1. 정보통신망법 제23조에서 정한 본인확인서비스 제공</dd>
+	<dd>2. 부정 이용 방지 및 수사의뢰</dd>
+	<dd>3. 휴대폰번호보호서비스 해제 (서비스 가입자에 한함)</dd>
+	<dt>제 2조 [고유식별정보의 이용 및 처리 내용]</dt>
+	<dd>에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 통신사 또는 통신사의 대행업무를 수행하는 사업자에 정보를 전송하여 방송통신위원회에서 고시로 지정한 휴대폰본인확인기관을 통해 본인여부를 확인하고 결과를 제공받기 위해 고유식별정보가 이용 및 처리됩니다.</dd>
+	<dd>- 이용 및 처리되는 고유식별정보 : 주민등록번호(내국인), <strong class="f_16 underline">외국인등록번호(외국인)</strong></dd>
+	<dd>상기와 같이 고유식별정보 이용 및 처리에 동의합니다.</dd>
+	<!--// SKT -->
+	<!-- KT -->
+	<dt>[(주)케이티 귀중]</dt>
+	<dd>(주)케이티 (이하 "본인확인기관")가 NICE평가정보(주) (이하 "회사")을 통해 제공하는 휴대폰 본인확인 서비스 관련하여 이용자로부터 수집한 고유식별정보를 이용하거나 타인에게 제공할 때에는 '정보통신망 이용촉진 및 정보보호 등에 관한 법률'(이하 "정보통신망법")에 따라 이용자의 동의를 얻어야 합니다.</dd>
+	<dt>■ 제 1 조[고유식별정보의 처리 동의]</dt>
+	<dd>"본인확인기관"은 정보통신망법 제23조의2 제2항에 따라 인터넷상에서 주민등록번호를 입력하지 않고도 본인임을 확인할 수 있는 휴대폰 본인확인서비스를 제공하기 위해 고유식별정보를 처리합니다. </dd>
+	<dt>■ 제 2 조[고유식별정보의 제공 동의] </dt>
+	<dd>"본인확인기관 지정 등에 관한 기준(방송통신위원회 고시)"에 따라 "회사"와 계약한 정보통신서비스 제공자 의 연계서비스 및 중복가입확인을 위해 아래와 같이 본인의 고유식별정보를 '다른 본인확인기관'에 제공하는 것에 동의합니다.</dd>
+	<dt>[고유식별정보 제공 동의]</dt>
+	<dt>제공자(본인확인기관)</dt>
+	<dd>(주)케이티</dd>
+	<dt>제공 받는자(본인확인기관</dt>
+	<dd><strong class="f_16 underline">NICE평가정보(주)</strong></dd>
+	<dt>제공하는 항목</dt>
+	<dd>주민등록번호(내국인), 외국인등록번호(국내거주외국인)</dd>
+	<dt>제공 목적</dt>
+	<dd><strong class="f_16 underline">CI(연계정보), DI(중복가입확인정보)의 생성 및 전달</strong></dd>
+	<dt>보유 및 이용기간</dt>
+	<dd><strong class="f_16 underline">CI(연계정보), DI(중복가입확인정보) 생성 후 즉시 폐기</strong></dd>
+	<dt>[NICE평가정보 귀중]</dt>
+	<dd>NICE평가정보(주) (이하 “회사”)가 에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 업무 대행을 통해 제공하는 휴대폰본인확인서비스와 관련하여 고객으로부터 수집한 고유식별정보를 이용 및 처리하거나 제3자에게 제공하고자 할 때에는 ‘정보통신망 이용촉진 및 정보보호 등에 관한 법률’에 따라서 고객으로 부터 동의를 받아야 합니다.</dd>
+	<dt>제1조 [고유식별정보의 이용 및 처리 목적]</dt>
+	<dd>“회사”는 고객의 고유식별정보를 아래의 목적으로 이용 및 처리할 수 있습니다.</dd>
+	<dd>1. 정보통신망법 제23조에서 정한 본인확인서비스 제공</dd>
+	<dd>2. 부정 이용 방지 및 수사의뢰</dd>
+	<dd>3. 휴대폰번호보호서비스 해제 (서비스 가입자에 한함)</dd>
+	<dt>제 2조 [고유식별정보의 이용 및 처리 내용]</dt>
+	<dd>에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 통신사 또는 통신사의 대행업무를 수행하는 사업자에 정보를 전송하여 방송통신위원회에서 고시로 지정한 휴대폰본인확인기관을 통해 본인여부를 확인하고 결과를 제공받기 위해 고유식별정보가 이용 및 처리됩니다.</dd>
+	<dd>- 이용 및 처리되는 고유식별정보 : 주민등록번호(내국인), <strong class="f_16 underline">외국인등록번호(외국인)</strong></dd>
+	<dd>상기와 같이 고유식별정보 이용 및 처리에 동의합니다.</dd>
+	<!--// KT -->
+	<!-- LG U+ -->
+	<dt>[LG유플러스(주) 귀중]</dt>
+	<dd>LG유플러스(주)(이하 ‘회사’)가 휴대폰본인확인서비스(이하 ‘서비스’)를 제공하기 위해 고유식별정보를 다음과 같이 제3자에게 제공 및 처리 하는 데에 동의합니다.</dd>
+	<dt>고유식별정보를 제공받는자</dt>
+	<dd><strong class="f_16 underline">서울신용평가정보(주), 코리아크레딧뷰로(주)</strong></dd>
+	<dt>고유식별정보를 제공받는자의 목적</dt>
+	<dd><strong class="f_16 underline">연계정보(CI)와 중복가입확인정보(DI)의 생성 및 ‘회사’ 제공</strong></dd>
+	<dt>고유식별정보 제공 항목</dt>
+	<dd>‘회사’가 보유하고 있는 고객의 주민등록번호와 <strong class="f_16 underline">외국인등록번호</strong></dd>
+	<dt>고유식별정보를 제공받는 자의 보유 및 이용기간</dt>
+	<dd><strong class="f_16 underline">연계정보(CI) 및 중복가입확인정보(DI) 생성후 즉시 폐기</strong></dd>
+	<dt>상기 고유식별정보 처리에 대한 내용에 동의하지 않으실 경우, ‘서비스’를 이용할 수 없습니다.</dt>
+	<dd>상기와 같이 고유식별정보 이용 및 처리에 동의합니다.</dd>
+	<dt>[NICE평가정보 귀중]</dt>
+	<dd>NICE평가정보(주) (이하 “회사”)가 에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 업무 대행을 통해 제공하는 휴대폰본인확인서비스와 관련하여 고객으로부터 수집한 고유식별정보를 이용 및 처리하거나 제3자에게 제공하고자 할 때에는 ‘정보통신망 이용촉진 및 정보보호 등에 관한 법률’에 따라서 고객으로 부터 동의를 받아야 합니다.</dd>
+	<dt>제1조 [고유식별정보의 이용 및 처리 목적]</dt>
+	<dd>“회사”는 고객의 고유식별정보를 아래의 목적으로 이용 및 처리할 수 있습니다.</dd>
+	<dd>1. 정보통신망법 제23조에서 정한 본인확인서비스 제공</dd>
+	<dd>2. 부정 이용 방지 및 수사의뢰</dd>
+	<dd>3. 휴대폰번호보호서비스 해제 (서비스 가입자에 한함)</dd>
+	<dt>제 2조 [고유식별정보의 이용 및 처리 내용]</dt>
+	<dd>에스케이텔레콤(주), (주)케이티, LG유플러스(주)의 통신사 또는 통신사의 대행업무를 수행하는 사업자에 정보를 전송하여 방송통신위원회에서 고시로 지정한 휴대폰본인확인기관을 통해 본인여부를 확인하고 결과를 제공받기 위해 고유식별정보가 이용 및 처리됩니다.</dd>
+	<dd>- 이용 및 처리되는 고유식별정보 : 주민등록번호(내국인), <strong class="f_16 underline">외국인등록번호(외국인)</strong></dd>
+	<dd>상기와 같이 고유식별정보 이용 및 처리에 동의합니다.</dd>
+	<!--// LG U+ -->
+</dl>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--// 고유식별 정보 처리에 대한 동의(필수)  end-->
+	
+	<!-- 통신사 이용약관에 대한 동의(필수) -->
+	<div id="commonAuthStipLayer2" class="wpoplayer layer faullpopup" style="display:none">
+		<div class="mw_wrap">
+			<div class="mw_header">
+				<h1>이용약관</h1>
+				<a href="#" class="wbtn_close">닫기</a>
+			</div>
+	
+			<div class="mw_content">
+				<div class="mw_section">
+					<h2 class="wtits">통신사 이용약관</h2><!-- 1224: 타이틀추가 -->
+					<div class="agreeWrap"><!-- 1224: agreeWrap class변경 -->
+						<dl>
+	<!-- SKT -->
+	<dt>[SKT 본인확인서비스 이용약관]</dt>
+	<dt>제1조 (목적)</dt>
+	<dd>이 약관은 ‘본인확인서비스’를 제공하는 에스케이텔레콤 주식’회사’(이하 ‘‘회사’’라 합니다)와 ‘본인확인서비스’ 이용자 (이하 ‘이용자’라 합니다)간에 ‘본인확인서비스’ 이용에 관한 ‘회사’와 ‘이용자’의 권리와 의무, 기타 제반 사항을 정함을 목적으로 합니다.</dd>
+	<dt>제2조 (용어의 정의)</dt>
+	<dd>
+		<ul>
+			<li>‘본인확인서비스’라 함은 ‘이용자’가 유무선 인터넷 웹’사이트’ 및 스마트폰 Application 등(이하 ‘사이트’라 합니다)에서 본인 명의로 개통한 휴대폰을 이용하여, 본인확인정보를 입력하고 인증 절차를 통하여 본인 여부와 본인이 등록한 정보의 정확성을 확인하여 주는 서비스를 말합니다.</li>
+			<li>‘본인확인정보’라 함은 본인확인을 위하여 ‘이용자’가 입력한 본인의 생년월일, 성별, 성명, 내/외국인 여부, 본인명의로 개통된 이동전화번호, 기타 ‘회사’와 ‘이용자’간에 별도로 설정한 번호 등 ‘이용자’에 대한 ‘본인확인서비스’ 제공을 위해 필요한 정보를 말합니다.</li>
+			<li>‘이용자’라 함은 ‘사이트’에서 ‘회사’가 제공하는 ‘본인확인서비스’를 이용하는 자를 말하며, ‘회사’의 이동전화서비스 가입자와 ‘회사’의 이동전화망을 이용하여 개별적으로 이동전화서비스를 제공하는 별정통신사업자의 가입자중 ‘회사’의 ‘본인확인서비스’를 이용하는 자를 말합니다.</li>
+			<li>‘중복가입확인정보’라 함은 ‘이용자’가 ‘사이트’에 가입하거나 ‘사이트’에서 특정 서비스 이용, 구매 등 어떤 행동을 할 때, 해당 ‘이용자’의 기 가입/이용 여부를 확인하기 위하여 생성되는 정보를 말합니다.</li>
+			<li>‘본인확인기관’이라 함은 정보통신망 이용촉진 및 정보보호 등에 관한 법률 등 ‘본인확인서비스’ 관련 법령에 따라 주민등록번호를 수집&#8226;이용하고, ‘사이트’에서 주민등록번호를 사용하지 아니하고 본인을 확인할 수 있도록 해주는 방법(이하 ‘대체수단’이라 합니다)을 개발&#8226;제공&#8226;관리하는 업무를 담당하는 사업자를 말합니다.</li>
+			<li>‘연계 식별정보’라 함은 ‘이용자’가 가입/등록한 ‘사이트’들간의 서비스 또는 Contents, point등의 연계, 정산 등의 목적으로 ‘사이트’에 가입/등록한 ‘이용자’를 식별하기 위하여 생성되는 정보를 말합니다.</li>
+			<li>‘대행기관’은 ‘이용자’가 ‘사이트’에서 ‘본인확인서비스’를 제공받을 수 있도록, ‘사이트’와 ‘회사’간의 ‘본인확인서비스’를 중계하고 ‘이용자’에게 ‘본인확인서비스’ 이용방법의 안내와 문의 등 지원업무를 담당하는 등, ‘회사’가 위탁한 업무범위내에서 ‘회사’를 대신하여 ‘이용자’에게 ‘본인확인서비스’와 관련된 업무를 제공하는 사업자를 말합니다.</li>
+			<li>‘사이트’라 함은 유무선 인터넷 웹’사이트’, 스마트폰 Application 등을 통하여 ‘이용자’에게 상품, 서비스, Contents, Point 등 각종 재화와 용역을 유/무료로 제공하는 개인, 법인, 기관, 단체 등을 말합니다.</li>
+			<li>‘접근매체’란 ‘본인확인서비스’ 이용을 위해 ‘이용자’ 및 ‘이용자’가 입력하는 내용 등의진실성과 정확성을 담보하는 수단으로서, ‘이용자’가 입력하는 제2항의 정보, I-PIN ID 및 Password 등 ‘본인확인기관’에서 발급받은 정보, 기타 ‘이용자’가 ‘회사’ 및 ‘사이트’에서 설정한 ID 및 Password 등의 정보, ‘이용자’ 명의의 이동전화 번호 등을 말합니다.</li>
+			<li>‘대체수단’이라 함은 ‘중복가입확인정보’ 및 연계식별정보를 포함하여, 주민등록정보를 사용하지 아니하고 본인여부를 식별 및 확인할 수 있는 수단을 말합니다.</li>
+			<li>‘부가서비스’라 함은 ‘회사’가 ‘본인확인서비스’와 관련하여 추가적인 보안&#8226;인증절차 등을 유료 또는 무료로 제공하는 서비스를 말하여, 유료인 경우에는 ‘이용자’에 대해 ‘회사’의 이동전화서비스 청구서에 합산하여 ‘부가서비스’ 이용요금을 청구하고 이동전화 요금과 함께 수납합니다.</li>
+		</ul>
+	</dd>
+	<dt>제3조 (약관의 명시 및 변경)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’는 이 약관을 ‘회사’가 운영하는 ‘사이트’ 등에 게시하거나 ‘이용자’의 ‘본인확인서비스’ 이용시 공개하여 ‘이용자’가 이 약관의 내용을 확인할 수 있도록 합니다. 또한 ‘이용자’의 요청이 있는 경우 전자문서의 형태로 약관 사본을 ‘이용자’에게 교부합니다.</li>
+			<li>‘회사’는 필요하다고 인정되는 경우 이 약관을 변경할 수 있으며, ‘회사’가 약관을 변경할 경우에는 적용일자 및 변경사유를 명시하여 ‘회사’가 운영하는 ‘사이트’에서 적용일자 15일 전부터 공지합니다. </li>
+			<li>‘회사’가 전항에 따라 변경 약관을 공지 또는 통지하면서 ‘이용자’에게 약관 변경 적용일 까지 거부의사를 표시하지 않으면 약관의 변경에 동의한 것으로 간주한다는 내용을 명확하게 공지 또는 통지하였음에도 ‘이용자’가 명시적으로 약관 변경에 대한 거부의사를 표시하지 아니하면 ‘이용자’가 변경 약관에 동의한 것으로 간주합니다. ‘이용자’는 변경된 약관 사항에 동의하지 않으면 ‘본인확인서비스’ 이용을 중단하고 이용 계약을 해지할 수 있습니다.</li>
+			<li>‘이용자’ 또는 ‘사이트’가 이 약관의 내용(약관 변경시 변경된 내용 포함)을 알지 못하여 발생하는 손해 및 피해에 대해서는 ‘회사’는 일체 책임을 지지 않습니다.</li>	
+		</ul>
+	</dd>
+	<dt>제4조 (이용 계약의 성립)</dt>
+	<dd>‘이용자’가 ‘사이트’ 등에 게시되거나 ‘본인확인서비스’ 이용시 공개되는 이 약관의 내용에 “동의” 버튼을 누르거나 체크하면 약관에 동의하고, ‘본인확인서비스’ 이용을 신청한 것으로 간주합니다.</dd>
+	<dt>제5조 (본인확인정보 및 ‘접근매체’의 관리 등)</dt>
+	<dd>
+	  <ul>
+			<li>‘회사’는 ‘본인확인서비스’ 제공시 ‘이용자’가 사용한 ‘접근매체’와 입력된 본인확인정보, ‘사이트’에서 제공하는 정보 등을 이용하여, ‘이용자’의 신원, 권한 및 ‘본인확인서비스’를 요청한 내역 등을 확인 할 수 있습니다.</li>
+			<li>‘이용자’는 자신의 본인확인 정보 및 ‘접근매체’를 제3자에게 대여하거나 사용을 위임하거나 양도 또는 담보 목적으로 제공할 수 없으며, 본인확인정보 및 ‘접근매체’의 도용이나 위조&#8226;변조 등을 방지하기 위해 충분한 주의를 기울여야 합니다.</li>
+			<li>‘이용자’는 자신의 본인확인정보 및 ‘접근매체’를 제3자에게 누설 또는 노출하거나 방치하여서는 안됩니다.</li>
+			<li>‘이용자’는 ‘접근매체’의 분실&#8226;도난&#8226;유출&#8226;위조&#8226;변조 등 또는 본인확인정보 유출 등의 사실을 인지할 경우 ‘회사’에 즉시 통지하여야 하며, ‘회사’는 ‘이용자’의 통지를 받은 때부터 즉시 ‘본인확인서비스’를 중지합니다.</li>
+	  </ul>
+	</dd>
+	<dt>제6조 (‘본인확인서비스’ 안내)</dt>
+	<dd>
+		<ul>
+			<li>회사가 제공하는 본인확인서비스는, 이용자가 입력한 본인확인정보에 대해, 이용자가 본인 명의로 개통하고 사용하고 있는 이동전화 서비스 관련 정보·중복가입확인정보·연계 식별정보를 이용하여, 본인 식별 또는 본인의 성년·미성년 여부, 중복가입여부 등을 확인하여주는 서비스 입니다. </li>
+			<li>‘회사’는 직접 또는 ‘대행기관’을 통하여 ‘사이트’에, 서비스 화면 또는 Socket형태로 ‘본인확인서비스’를 제공하며, ‘사이트’는 ‘사이트’ 운영과 관련된 법령과 ‘사이트’ 이용약관에 따라 ‘이용자’에게 ‘본인확인서비스’ 이용 수단을 제공합니다.</li>
+			<li>‘이용자’는 특정 ‘사이트’에서 ‘회사’ 및 ‘대행기관’의 이용약관, ‘사이트’의 이용약관에 동의하는 경우, 해당 ‘사이트’에서 ‘회사’가 제공하는 ‘본인확인서비스’를 이용하실 수 있습니다.</li>
+			<li>제3항에 따라 각 이용약관에 동의한 경우, ‘이용자’가 자신의 생년월일, 성명, 성별, 내/외국인, 본인 명의로 가입한 이동통신사와 이동전화 번호 등의 정보를 입력하고, 입력한 정보가 일치하는 경우에 ‘이용자’의 이동전화 번호로 송신되는 1회성 암호(승인암호)를 정확하게 입력하는 것으로 본인 확인이 이루어 집니다. 단, ‘회사’가 직접 운영하는 ‘사이트’ 또는 관련 법령 등에 따라 주민등록번호의 수집&#8226;이용이 허용되는 ‘사이트’에서는 생년월일 대신 주민등록번호를 받을 수 있습니다.</li>
+			<li>제4항에 따라 본인확인이 완료된 ‘이용자’에 대해서는 해당 ‘이용자’의 본인확인정보, ‘중복가입확인정보’ 및 ‘연계 식별정보’를 ‘회사’가 보유하고 있는 경우, ‘사이트’의 요청에 따라 ‘사이트’에 제공될 수 있으며, 제공된 정보는 각 ‘사이트’가 ‘이용자’와 체결한 약관, 계약에 따라 운영&#8226;관리&#8226;폐기됩니다.</li>
+		</ul>
+	</dd>
+	<dt>제7조(‘본인확인서비스’의 ‘부가서비스’)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’는 ‘본인확인서비스’ 이용과 관련하여, 보다 강화된 보안을 필요로 하는 ‘이용자’가 가입을 신청하는 경우에 한하여, 별도의 ‘부가서비스’를 유료 또는 무료로 제공합니다.</li>
+			<li>
+				‘회사’가 제공하는 ‘부가서비스’는 다음 각 호와 같으며, 상세 서비스 내용 및 이용 조건은 서비스별 이용약관에 따릅니다.
+				<ol>
+					<li>휴대폰 인증보호 서비스 (월 1천원, 부가가치세 별도)</li>
+				</ol>
+			</li>	  
+		</ul>
+	</dd>
+	<dt>제8조 (‘대체수단’의 생성 및 제공)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’는 ‘이용자’의 이동전화 가입시 수집한 주민등록번호를 토대로 ‘대체수단’을 생성하고 ‘사이트’에 제공할 수 있습니다.</li>
+			<li>‘회사’의 ‘대체수단’ 생성 및 제공방법은 다음 각 호와 같습니다.
+				<ol>
+					<li>‘이용자’의 이동전화 가입시, 제3의 ‘본인확인기관’에 실명 사용여부를 질의하고, 이에 따라 ‘대체수단’을 받아와서 저장하는 방법</li>
+					<li>‘이용자’의 ‘본인확인서비스’ 이용시, 제3의 ‘본인확인기관’간의 합의를 통하여 비밀번호 등 ‘대체수단’ 규격을 정한 후, 이에 따라 ‘회사’가 생성하거나 제3의 ‘본인확인기관’으로부터 제공받는 방법</li>
+					<li>‘이용자’의 ‘본인확인서비스’ 이용시, 해당 ‘이용자’의 이동전화가입시 ‘회사’가 제공받은 주민등록번호와 해당 ‘이용자’가 이용하고 있는 ‘사이트’의 일련번호를 제3의 ‘본인확인기관’에 제공하고, 이에 해당되는 ‘대체수단’을 받아와서 제공하는 방법</li>
+				</ol>
+			</li>
+			<li>제1항 제3호에 따라 ‘회사’가 제3의 ‘본인확인기관’으로부터 ‘대체수단’을 제공받은 경우, 해당 ‘대체수단’의 정확성 유무에 대해서는 ‘회사’가 책임지지 않습니다.</li>
+		</ul>
+	</dd>
+	<dt>제9조 (‘본인확인서비스’ 제공시간)</dt>
+	<dd>
+		<ul>
+			<li>‘본인확인서비스’의 이용은 연중무휴 1일 24시간을 원칙으로 합니다. 다만, 정기 점검 및 기타 기술상의 이유, 기타 운영상의 사유와 목적에 따라 ‘회사’가 정한 기간에 일시 중지될 수 있으며, 각 ‘사이트’의 기술상, 운영상의 사유와 목적에 따라 일시 중지될 수 있습니다.</li>
+			<li>‘회사’는 ‘본인확인서비스’ 중지에 따라 ‘이용자’에게 별도의 보상은 하지 않습니다. 단 ‘본인확인서비스’를 이용기간에 따라 정액제 형태로 유료 판매하는 경우, 정액제 유료 ‘이용자’에게는 중지시간이 24시간을 초과한 경우에 한하여, 월 이용금액을 해당월의 날짜 수로 일할 계산하여 환불 또는 차감하며, 이용금액의 과금 당사자가 ‘회사’인 경우에는 ‘회사’가, ‘대행기관’인 경우에는 ‘대행기관’이 환불 또는 차감하여 드립니다.</li>
+		</ul>
+	</dd>
+	<dt>제10조 (‘회사’의 권리와 의무)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’가 ‘접근매체’의 발급주체가 아닌 경우에는 ‘접근매체’의 위조&#8226;변조&#8226;누설 등으로 인해 ‘이용자’에게 발생한 손해에 대하여 배상책임이 없습니다.</li>
+			<li>‘이용자’가 제5조 제2항 내지 제4항의 내용을 준수하지 아니하거나, ‘회사’가 부정사용 여부를 확인할 수 없는 ‘접근매체’ 또는 본인확인정보의 이용으로 인해 발생한 ‘이용자’의 손해에 대하여 ‘회사’는 배상책임이 없습니다.</li>
+			<li>‘회사’는 ‘본인확인서비스’ 제공과 관련하여 인지한 ‘이용자’의 본인확인정보를 본인의 승낙 없이 제3자에게 누설하거나 배포하지 않습니다. 단, 국가기관의 요구가 있는 경우, 범죄에 대한 수사상의 목적이 있는 경우 등 관계 법령에서 정한 절차에 따른 요청이 있는 경우에는 그러하지 않습니다.</li> 
+			<li>‘회사’는 ‘이용자’에게 안정적인 ‘본인확인서비스’ 제공을 위하여 지속적으로 관련 시스템이나 절차, 기능 등의 예방점검, 유지보수 등을 이행하며, ‘본인확인서비스’의 장애가 발생하는 경우, 이를 지체 없이 수리 및 복구합니다.</li>
+			<li>‘회사’는 복제폰, 대포폰, 휴대폰 소액대출(일명 휴대폰깡) 등 시장 질서를 교란시키는 불법행위에 의한 피해 방지를 위하여 불법행위가 의심되는 ‘이용자’ 또는 회선에 대한 ‘본인확인서비스’ 이용을 제한하거나 중지하는 것은 물론, 관계 법령에 따라 행정 및 사법기관에 수사를 의뢰할 수 있습니다.</li>
+			<li>‘회사’는 ‘회사’가 제공하는 이동전화 등 통신역무의 요금을 정상적으로 납부하지 않거나 일부 특수 요금제에 가입한 ‘이용자’에 대하여 ‘본인확인서비스’ 이용을 제한할 수 있습니다.</li>
+			<li>‘회사’는 ‘이용자’가 ‘회사’의 이동전화 등 통신역무 이용을 위해 제출한 가입신청서 또는 이와 관련된 본인확인 절차가, 명의도용, 관련 서류 위&#8226;변조 등 위법 행위가 개입된 사실을 확인하는 즉시 해당 ‘이용자’ 및 회선에 대한 ‘본인확인서비스’ 제공을 중지하며, 해당 ‘이용자’와 회선에 대해 관련 법령 및 통신역무 이용약관에 따른 조치를 취할 수 있습니다.</li>
+			<li>‘이용자’중 ‘회사’의 이동전화망을 이용하여 개별적으로 이동전화서비스를 제공하는 별정통신사업자의 가입자에 대해서는, 개별 별정통신사업자의 본인확인절차 미비, 명의도용, 관련 서류 위&#8226;변조, 본인확인정보의 오류 등에 대해 ‘회사’는 일절 책임을 부담하지 않고, 개별 별정통신사업자가 일체의 책임을 부담합니다.</li>
+		</ul>
+	</dd>
+	<dt>제11조 (‘이용자’의 권리와 의무)</dt>
+	<dd>
+		<ul>
+			<li>‘이용자’는 ‘본인확인서비스’를 이용함에 있어서 다음 각 호에 해당하는 행위를 하여서는 안되며, ‘회사’는 ‘이용자’의 다음 각 호의 행위에 대해 일체의 법적 책임을 지지 않습니다.
+				<ol>
+					<li>본인이 아닌 타인의 본인확인정보를 부정하게 사용 및 도용하는 행위</li>
+					<li>‘회사’ 및 ‘대행기관’, ‘사이트’의 저작권, 제3자의 저작권 등 기타 권리를 침해하는 행위</li>
+					<li>법령에 규정하는 제반 범죄 및 위법 행위</li>
+					<li>이 약관에 규정된 ‘이용자’의 의무 또는 준수사항을 위반하는 행위</li>
+				</ol>
+			</li>
+			<li>‘이용자’는 이 약관에서 규정하는 사항과 ‘본인확인서비스’에 대한 이용안내 또는 주의사항 등을 준수하여야 합니다.</li>
+			<li>‘이용자’는 제5조의 의무를 이행하여야 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제12조 (‘이용자’ 정보의 제공 범위)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’는 ‘본인확인서비스’를 제공함에 있어 취득한 ‘이용자’의 정보를 ‘이용자’의 동의 없이 제3자에게 제공, 누설하거나 업무상 목적 외에 사용하지 않습니다.</li>
+			<li>‘이용자’가 개인정보의 수집&#8226;이용&#8226;제공에 동의하고 이용하는 ‘사이트’ 또는 신용카드사 등 제3자가, ‘이용자’의 이동전화 번호 및 해당 ‘사이트’&#8226;신용카드사 등 제3자가 보유한 ‘대체수단’의 진실성 여부를 ‘회사’에 대해 확인할 경우, ‘회사’는 해당 이동전화 번호 및 ‘대체수단’의 진실성 여부를, 확인을 요청한 ‘사이트’ 또는 신용카드사 등 제3자에게 회신할 수 있습니다.</li>
+		</ul>
+	</dd>
+	<dt>제13조 (‘본인확인서비스’의 안정성 확보)</dt>
+	<dd>
+		<ul>
+			<li>‘회사’는 ‘본인확인서비스’의 안전성과 신뢰성, 보안성을 확보하기 위하여 해킹방지시스템 및 보안관리 체계 구성, 접근제한 등 기술적, 관리적 조치를 취합니다.</li>
+			<li>‘회사’는 ‘본인확인서비스’ 관련 서버 및 통신기기의 정상작동여부 확인을 위하여 정보처리시스템 자원 상태의 감시, 경고 및 제어가 가능한 모니터링 체계를 갖춥니다.</li>
+			<li>‘회사’는 해킹 침해 방지를 위하여 다음 각 호의 시스템 및 프로그램을 설치하여 운영합니다. 
+				<ol>
+					<li>침입 차단 및 탐지시스템 설치</li>
+					<li>그 밖에 필요한 보호장비 또는 암호프로그램 등 정보보호시스템 설치 </li>
+				</ol>
+			</li>
+			<li>‘회사’는 컴퓨터바이러스 감염을 방지하기 위하여 바이러스 방지를 위한 방어, 탐색, 복구 절차를 자체적으로 운영합니다.</li>
+		</ul>
+	</dd>
+	<dt>제14조 (‘이용자’의 개인정보보호)</dt>
+	<dd>
+		<ul>
+			<li>‘이용자’의 개인정보 보호는 ‘회사’가 관련 법령과 ‘회사’가 수립하여 운영하는 개인정보 취급방침 등에 따릅니다. 자세한 ‘회사’의 개인정보 수집&#8226;이용 범위 등은 이동전화 가입신청서와 ‘회사’ 대표 ‘사이트’(www.sktelecom.com)에서 제공되는 개인정보 취급방침을 참조하시기 바랍니다.</li>
+			<li>‘이용자’중 ‘회사’의 이동전화망을 이용하여 개별적으로 이동전화서비스를 제공하는 별정통신사업자의 가입자에 대해서는, 해당 가입자가 속한 개별 별정통신사업자가 개인정보보호 및 수집&#8226;이용&#8226;제공 등에 대한 법적 절차 준수와 관련된 일체의 책임을 부담하며, 해당 가입자에 대한 개인정보 수집&#8226;이용 범위 등은 개별 별정통신사업자의 개인정보 취급방침을 참조하시기 바랍니다.</li>
+			<li>제1항과 제2항의 개인정보 취급방침에서 정한 바 이외에, ‘회사’는 ‘본인확인서비스’를 위하여  다음 각 호의 경우에 ‘이용자’ 개인정보의 일부를 ‘회사’가 선정한 사업자에게 제공할 수 있습니다.
+				<ol>
+					<li>‘이용자’의 ‘본인확인서비스’ 이용시 ‘사이트’가 필요로 하는 ‘이용자’ 식별정보(‘중복가입확인정보’, ‘대체수단’)의 생성 및 관리, 제공을 위하여 ‘이용자’의 주민등록정보를 제3의 ‘본인확인기관’에게 제공할 수 있습니다.</li>
+					<li>‘회사’가 수집 또는 제공받은 개인정보(‘중복가입확인정보’, ‘대체수단’)는 ‘회사’ 또는 ‘대행기관’을 통해 ‘사이트’에게 제공합니다.</li>
+					<li>‘본인확인서비스’를 위한 ‘회사’의 개인정보의 수집&#8226;이용&#8226;제공범위 및 개인정보의 취급을 위탁하는 수탁자와 위탁업무내용 등은 이 약관이 게시되는 화면에 별도로 링크하여 제공합니다.</li>
+				</ol>
+			</li>
+		</ul>
+	</dd>
+	<dt>제15조 (약관 외 준칙)</dt>
+	<dd>이 약관에 명시되지 아니한 사항에 대해서는 정보통신망 이용 촉진 및 정보보호 등에 관한 법률 등 기타 관련 법령 또는 상관례에 따릅니다.</dd>
+	<dt>제16조 (관할법원)</dt>
+	<dd>
+		<ul>
+			<li>‘본인확인서비스’ 이용과 관련하여 ‘회사’와 ‘이용자’ 사이에 분쟁이 발생한 경우, ‘회사’와 ‘이용자’는 분쟁의 해결을 위해 성실히 협의합니다.</li>
+			<li>제1항의 협의에서도 분쟁이 해결되지 않을 경우 양 당사자는 민사소송법상의 관할 법원에 소를 제기할 수 있습니다.</li>
+		</ul>
+	</dd>
+	<dt>부칙</dt>
+	<dd>(시행일) 이 약관은 공지한 날로부터 시행합니다.</dd>
+	<!--// SKT -->
+	<!-- KT -->
+	<dt>[KT 서비스 이용약관]</dt>
+	<dt>제1조 (목적)</dt>
+	<dd>본 약관은 주민등록번호 대체 본인확인서비스를 제공하는 주식회사 케이티(이하 “회사”)와 이용 고객(이하 “이용자”)간에 서비스 제공에 관한 이용조건 및 절차 등 기타 필요한 사항을 규정함을 목적으로 합니다.</dd>
+	<dt>제2조 (용어의 정의)</dt>
+	<dd>본 약관에서 사용하는 용어의 정의는 다음과 같습니다.
+		<ul>
+			<li>“본인확인서비스”라 함은 이용자가 인터넷상에서 본인명의의 휴대폰(이용자 개인 명의 휴대폰 또는 법인 명의 휴대폰으로서 이용자가 본인확인서비스에 가입한 휴대폰)을 이용하여, 주민등록번호 입력 없이도 본인임을 안전하게 식별 및 확인해 주는 서비스를 말합니다.</li>
+			<li>“간편본인확인서비스”라 함은 본인확인서비스를 이용함에 있어 입력하는 본인확인정보를 성명과 휴대폰번호로 간소화하고 “KT인증” 애플리케이션을 이용하는 방식을 의미합니다.</li>
+			<li>“KT 인증”이라 함은 회사가 제공하는 애플리케이션(Application, 이하 ‘KT인증 앱’)으로서 이용자가 KT 인증 앱에 등록한 인증수단을 확인하는 행위(예. 비밀번호 입력, 지문인식, 화자인식 등)를 통해 이용자 본인임을 안전하게 식별 및 확인하고 단말기의 점유를 확인하는 서비스를 말합니다.</li>
+			<li>“이용자”라 함은 회사 또는 대행기관에서 제공하는 본인확인서비스의 이용을 위해 자신의 본인확인정보를 회사, 대행기관, 본인확인기관 등에게 제공하고, 본인임을 확인 받고자 하는 자로서 다음 각호의 자를 말합니다.
+				<ol>
+					<li>회사의 개인 명의 이동전화서비스 가입자</li>
+					<li>회사의 이동전화망을 이용하여 자체적으로 이동전화서비스를 제공하는 별정통신사업자의 가입자 중 개인 명의 가입자</li>
+					<li>회사의 법인 명의 이동전화서비스 가입자의 휴대폰을 실제 사용하는 자로서 명의인의 법인으로부터 필요한 서류를 발급 받아 이를 회사에 제출하고 본인확인서비스에 가입한 자</li>
+				</ol>
+			</li>
+			<li> “본인확인정보”라 함은 이용자가 입력한 생년월일, 성별, 성명, 내/외국인, 휴대폰번호, 통신사 등 본인 식별에 필요한 이용자의 정보를 말합니다.</li>
+			<li>“중복가입확인정보”라 함은 웹사이트에 가입하고자 하는 이용자의 중복확인을 위해 제공되는 정보를 말 합니다.</li>
+			<li>“연계정보”라 함은 인터넷사업자의 온ㆍ오프라인 서비스 연계 등의 목적으로 이용자를 식별하기 위해 제공되는 정보를 말합니다.</li>
+			<li>“본인확인기관”이라 함은 주민등록번호를 사용하지 아니하고 본인을 확인하는 방법 또는 본인확인서비스를 제공 하는 자로 방송통신위원회로부터 본인확인기관으로 지정을 받은 자를 의미합니다.</li>
+			<li>“대행기관”이라 함은 회사를 대신하여 본인확인서비스의 제공 및 지원 등의 중계 업무를 담당하는 곳으로 회사와 업무지원에 대한 계약이 완료되어 인터넷사업자에 본인확인서비스를 제공하는 사업체를 말합니다.</li>
+			<li>“인터넷사업자”라 함은 인터넷을 이용하여 정보를 제공하거나, 정보의 제공을 매개하는 일을 업으로 하는 자로 회사 또는 대행기관과의 서비스 계약을 통해, 인터넷 웹사이트에서 이용자에 대한 본인확인정보를 제공받는 사업체를 말합니다.</li>
+			<li>“접근매체”라 함은 본인확인을 함에 있어 이용자 본인확인의 진실성과 정확성을 확보하기 위하여 사용 되는 수단 또는 정보로서 회사에 등록된 이용자의 전화번호, 이용자의 생체정보, 이상의 수단이나 정보를 사용하는데 필요한 비밀번호 등을 말합니다.</li>
+		</ul>
+	</dd>
+	<dt>제3조 (약관의 명시 및 변경)</dt>
+	<dd>
+		<ul>
+			<li>회사는 본 약관을 회사가 운영하는 사이트에 게시하거나 본인확인서비스 이용시 이용자가 내용을 확인할 수 있도록 공개합니다.</li> 
+			<li>회사는 약관의 규제에 관한 법률 및 기타 관련 법령에 위배되지 않는 범위에서 본 약관의 내용을 개정 할 수 있으며, 변경된 경우에는 회사가 운영하는 사이트에서 공지합니다. 다만 “이용자”의 권리와 의무에 관한 중요한 사항은 변경된 내용의 시행 15일 이전에 공지합니다.</li> 
+			<li>이용자는 개정된 약관 사항에 동의하지 않을 권리가 있으며, 개정된 약관에 동의하지 않는 경우, 본 서비스의 이용을 중단하고 이용 계약을 해지할 수 있습니다. 이용자가 회사의 전항 단서에 따른 약관의 불리한 변경에 대하여 적용예정일까지 회사에게 부동의 의사를 표시하지 않거나 이용계약을 해지하지 않은 경우 변경된 약관을 승인한 것으로 봅니다.</li>
+			<li>이용자가 변경된 약관에 대한 내용을 알지 못하여 발생하는 손해 및 피해에 대해서는 회사가 책임을 지지 않습니다.</li>
+		</ul>
+	</dd>
+	<dt>제4조 (접근매체의 관리 등)</dt>
+	<dd>
+		<ul>
+			<li>회사는 서비스 제공 시 접근매체를 이용하여 이용자의 신원, 권한 및 거래지시의 내용 등을 확인 할 수 있습니다.</li>
+			<li>이용자는 접근매체를 제3자에게 대여하거나 사용을 위임하거나 양도 또는 담보 목적으로 제공할 수 없습니다.</li>
+			<li>이용자는 자신의 접근매체를 제3자에게 누설 또는 노출하거나 방치하여서는 안되며, 접근매체의 도용 이나 위조 또는 변조를 방지하기 위해 충분한 주의를 기울여야 합니다.</li>
+			<li>회사가 접근매체의 발급주체가 아닌 경우에는 접근매체의 위조나 변조로 발생한 사고로 인하여 이용자에게 발생한 손해에 대하여 배상책임이 없습니다.</li>
+		</ul>
+	</dd>
+	<dt>제5조 (본인확인서비스 안내)</dt>
+	<dd>
+		<ul>
+			<li>본인확인서비스는 이용자가 주민등록번호의 입력 없이, 본인명의로 된 개통된 휴대폰정보(이용자 개인 명의로 개통된 휴대폰 정보 또는 법인 명의로 개통된 휴대폰으로서 이용자가 본인확인서비스에 가입한 정보)를 이용하여 본인 식별 또는 본인 확인이 가능한 생년월일 기반의 주민등록번호 대체 휴대폰인증 서비스 입니다.</li>
+			<li>회사는 대행기관을 통해 인터넷사업자에게 본인확인서비스를 제공하며, 인터넷사업자는 회원가입, ID/PW 찾기, 성인인증, 기타 본인확인이 필요한 경우 이용자에게 본인확인서비스를 제공 합니다.</li>
+			<li>이용자는 자신의 생년월일, 성명, 성별, 내/외국인, 휴대폰번호, 통신사 등의 정보를 입력하며(법인 명의로 개통된 휴대폰으로서 이용자가 본인확인서비스에 가입한 경우에는 본인확인서비스 가입 시 등록한 비밀번호를 추가로 입력하며), 입력한 정보가 일치한 경우에는 해당 휴대폰번호로 수신된 1회성 비밀번호(승인번호)를 정확하게 입력하는 것으로 본인 식별 또는 본인 확인이 이루어집니다. 단, 이용자가 간편본인확인서비스를 선택한 경우에는 자신의 통신사, 휴대폰번호, 이름만 입력하며, 입력한 정보가 일치한 경우에 해당 휴대폰에 설치 및 가입된 KT 인증 앱을 통해 이용자가 사전에 등록해둔 인증수단(비밀번호, 지문, 화자 정보 등)을 정확하게 입력하는 것으로 본인 식별 또는 본인 확인이 이루어집니다. 이 때, KT 인증 앱에 미 가입된 상태로 간편본인확인서비스 이용을 시도하는 경우 회사는 영속적인 서비스 제공을 위해 해당 이용자에게 KT 인증 앱 설치를 안내합니다(24시간 내 1회).</li>
+			<li>본인확인서비스는 본인 명의로 개통된 휴대폰 정보(이용자 개인 명의로 개통된 휴대폰 정보 또는 법인 명의로 개통된 휴대폰으로서 이용자가 본인확인서비스에 가입한 정보)로 본인확인이 이루어집니다. 단, 휴대폰 일시정지 또는 이용정지 시 해당 정지기간 동안에는 본인확인서비스도 정지됩니다. </li>
+			<li>본인 확인이 완료 된 이용자에 대해서는 본인확인정보와 중복가입확인정보 및 연계정보가 인터넷사업 자에게 제공되며, 인터넷사업자는 중복가입확인정보 또는 연계정보 등을 이용하여 이용자 관리 및 컨텐츠를 제공ㆍ운영 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제6조 (본인확인서비스 제공시간)</dt>
+	<dd>
+		<ul>
+			<li>본인확인서비스의 이용은 연중무휴 1일 24시간을 원칙으로 합니다. 다만, 정기 점검 및 기타 기술상의 이유로 본인확인서비스가 일시 중지될 수 있고 또한, 운영상의 목적으로 회사가 정한 기간에도 일시 중지될 수 있습니다.</li>
+			<li>회사는 효율적인 업무 수행을 위하여 필요하다고 판단하는 경우 본인확인서비스를 일정 범위로 분할하여 각 범위 별로 이용가능 시간을 달리 정할 수 있으며, 이 경우 그 내용을 공지 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제7조 (회사의 권리와 의무)</dt>
+	<dd>
+		<ul>
+			<li>회사는 이용자가 본인확인서비스 이용시 본 이용약관이나 안내사항 등을 확인하지 않아 발생한 손해, 또는 접근매체를 통해 알 수 있었음에도 불구하고, 이용자가 자신의 접근매체를 누설 또는 노출하거나 방치한 손해 등 이용자의 부주의에 기인한 손해에 대하여 배상책임이 없습니다.</li>
+			<li>회사는 본인확인서비스 제공과 관련하여 인지한 이용자의 본인확인정보를 본인의 승낙 없이 제3자에게 누설하거나 배포하지 않습니다. 단, 국가기관의 요구가 있는 경우, 범죄에 대한 수사상의 목적이 있는 경우 등 기타 관계 법령에서 정한 절차에 따른 요청이 있는 경우에는 그러하지 않습니다.</li>
+			<li>회사는 이용자에게 안정적인 본인확인서비스 제공을 위하여 지속적으로 본인확인서비스의 예방점검, 유지보수 등을 이행하며, 본인확인서비스의 장애가 발생하는 경우, 이를 지체 없이 수리 및 복구합니다.</li>
+			<li>
+				회사는 아래와 같은 사유가 발생하는 경우 이용자에 대하여 본인확인서비스를 제한할 수 있습니다.
+				<ol>
+					<li>다른 사람의 명의사용 등 이용자 등록 시 허위로 신청하는 경우</li>
+					<li>이용자 등록 사항을 누락하거나 오기하여 신청하는 경우</li>
+					<li>대포폰(이동전화 서비스 본래의 목적과는 달리 불법대출 등 부정사용을 목적으로 타인 명의 무단 개통 또는 명의자를 교사하여 개통하는 휴대전화)을 이용하는 경우</li>
+					<li>타인의 명의를 도용한 사실이 있거나 명의 도용을 이유로 처벌받은 경우</li>
+					<li>불법 복제와 관련된 사실이 있거나 처벌 받은 경우</li>
+					<li>기타 시장질서를 교란시키는 불법행위에 해당하는 경우</li>
+				</ol>
+			</li>
+			<li>
+				회사는 다음 각 호에 해당하는 경우 서비스의 전부 또는 일부를 중지할 수 있습니다. 회사는 회사의 고의 또는 과실이 없는 한 이로 인하여 발생한 손해에 대하여 배상책임이 없습니다.
+				<ol>
+					<li>컴퓨터 등 정보통신설비의 보수점검 교체 및 고장, 통신의 두절 등의 사유가 발생한 경우</li> 
+					<li>서비스를 위한 설비의 보수 등 공사로 인해 부득이한 경우</li> 
+					<li>서비스 업그레이드 및 시스템 유지보수 등을 위해 필요한 경우</li> 
+					<li>정전, 제반 설비의 장애 또는 이용량의 폭주 등으로 정상적인 서비스 이용에 지장이 있는 경우</li> 
+					<li>이용자가 회사의 본인확인서비스 운영을 방해하는 경우</li> 
+					<li>기타 천재지변, 국가비상사태 등 불가항력적 사유가 있는 경우</li> 
+					<li>규제기관이 마련한 본인확인서비스 가이드를 준수하지 않고 임의로 변형 적용한 사이트에서 본인확인서비스를 요청하는 경우</li>
+				</ol>
+			</li>
+			<li>전 항에 의하여 본인확인서비스를 중지하는 경우에는 회사가 이를 공지합니다. 다만, 회사가 통제할 수 없는 사유로 인한 본 서비스의 중단(회사 또는 운영자의 고의 및 과실이 없는 디스크 장애, 시스템 다운 등)으로 인하여 사전 공지가 불가능한 경우에는 그러하지 아니합니다.</li>
+			<li>이용자 중 회사의 이동전화망을 이용하여 자체적으로 이동전화서비스를 제공하는 별정통신사업자의 개인 명의 가입자에 대하여는 해당 별정통신사업자의 본인확인절차 미비, 명의도용, 관련 서류 위&#9702;변조, 본인확인정보의 오류 등에 대해 회사는 일체 책임을 부담하지 않고 해당 별정통신사업자가 일체의 책임을 부담합니다. </li>
+		</ul>
+	</dd>
+	<dt>제8조 (이용자의 의무)</dt>
+	<dd>
+		<ul>
+			<li>
+				이용자는 본인확인서비스를 이용함에 있어서 다음 각호에 해당하는 행위를 하여서는 안되며, 회사는 위반 행위에 따르는 일체의 법적 책임을 지지 않습니다.
+				<ol>
+					<li>타 이용자의 본인확인정보를 부정하게 사용 및 도용하는 행위</li>
+					<li>회사의 저작권, 제3자의 저작권 등 기타 권리를 침해하는 행위</li>
+					<li>범죄 행위</li>
+					<li>기타 관련 법령에 위배되는 행위</li>
+				</ol>
+			</li>
+			<li>이용자는 본 약관에서 규정하는 사항과 본인확인서비스에 대한 이용안내 또는 주의사항 등을 준수하여야 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제9조 (본인확인정보의 제공금지)</dt>
+	<dd>회사는 서비스를 제공함에 있어 취득한 이용자의 정보 또는 자료를 이용자의 동의 없이 제3자에게 제공, 누설하거나 업무상 목적 외에 사용하지 않습니다.</dd>
+	<dt>제10조 (본인확인서비스의 안정성 확보)</dt>
+	<dd>
+		<ul>
+			<li>회사는 본인확인서비스의 안전성과 신뢰성을 확보하기 위하여 업무처리지침의 제정 및 시행, 정보 처리시스템 및 전산자료의 관리 등의 관리적 조치와 모니터링 체계 및 해킹방지시스템 구축 및 운영 등의 기술적 조치를 취해야 합니다.</li>
+			<li>회사는 서버 및 통신기기의 정상작동여부 확인을 위하여 정보처리시스템 자원 상태의 감시, 경고 및 제어가 가능한 모니터링 체계를 갖추어야 합니다.</li>
+			<li>“회사”는 해킹 침해 방지를 위하여 정보보호시스템 및 프로그램을 설치하여 운영합니다.</li>
+			<li>
+				“회사”는 컴퓨터바이러스 감염을 방지하기 위하여 다음 각 호를 포함한 대책을 수립, 운영하고 있습니다.
+				<ol>
+					<li>출처, 유통경로 및 제작자가 명확하지 아니한 응용프로그램은 사용을 자제하고 불가피할 경우에는 컴퓨터바이러스 검색프로그램으로 진단 및 치료 후 사용할 것</li>
+					<li>컴퓨터바이러스 검색, 치료 프로그램을 설치하고 최신 버전을 유지할 것</li>
+					<li>컴퓨터바이러스 감염에 대비하여 방어, 탐색 및 복구 절차를 마련할 것</li>
+				</ol>
+			</li>
+		</ul>
+	</dd>
+	<dt>제11조 (이용자의 개인정보보호)</dt>
+	<dd>회사는 관련법령이 정하는 방에 따라서 이용자의 개인정보를 보호하기 위하여 노력하며, 이용자의 개인정보에 관한 사항은 관련 법령 및 회사가 정하는 개인정보취급방침에 정한 바에 따릅니다.</dd>
+	<dt>제12조 (개인정보의 처리)</dt>
+	<dd>회사는 수집된 개인정보의 취급 및 관리 등의 업무를 스스로 수행함을 원칙으로 하나, 필요한 경우 업무의 일부 또는 전부를 회사가 선정한 사업자에게 위탁할 수 있습니다.
+		<ul>
+			<li>회사는 수집된 개인정보의 취급 및 관리 등의 업무를 스스로 수행함을 원칙으로 하나, 필요한 경우 업무의 일부 또는 전부를 회사가 선정한 사업자에게 위탁할 수 있습니다.</li>
+			<li>본인확인서비스 이용 시 이용자의 개인정보 수집 및 이용 동의에 따라 인터넷사업자가 필요로 하는 이용자 식별정보(중복가입확인정보, 연계정보)의 생성 및 제공을 위하여 관련 정보를 타 본인확인기관에게 제공할 수 있으며, 수집된 식별정보(중복가입확인정보, 연계정보)는 본인 식별 및 확인 위한 목적으로 회사 또는 대행기관을 통해 인터넷사업자에게 제공할 수 있습니다.</li>
+			<li>개인정보 처리 및 위탁 등에 관한 사항은 관련법령 및 회사가 정하는 개인정보취급방침에 정한 바에 따릅니다.</li>
+		</ul>
+	</dd>
+	<dt>제13조 (약관 외 준칙)</dt>
+	<dd>본 약관에 명시되지 아니한 사항에 대해서는 정보통신망 이용 촉진 및 정보보호 등에 관한 법률, 개인정 보보호법 등 기타 관련법령 또는 상관례에 따릅니다.</dd>
+	<dt>부칙</dt>
+	<dd>(시행일) 이 약관은 공시한 날로부터 시행합니다.</dd>
+	<dt>부칙</dt>
+	<dd>(시행일) 이 약관은 2015년 4월 29일부터 시행합니다.</dd>
+	<dt>부칙</dt>
+	<dd>(시행일) 이 약관은 2016년 8월 2일부터 시행합니다.</dd>
+	<!--// KT -->
+	<!-- LG U+-->
+	<dt>[LG유플러스(주) 이용약관]</dt>
+	<dt>제 1조 (목적)</dt>
+	<dd>본 약관은 주민번호를 대체한 휴대폰 본인확인서비스(이하 “서비스”)를 제공하는 LG유플러스(이하 “회사”)와 이용 고객(이하 “이용자”)간에 서비스 제공에 관한 이용조건 및 절차 등 기타 필요한 사항을 정함을 목적으로 합니다.</dd>
+	<dt>제 2조 (용어의 정리)</dt>
+	<dd>본 약관에서 사용하는 용어의 정의는 다음과 같습니다.
+		<ul>
+			<li>“휴대폰 본인확인서비스”라 함은 이용자가 인터넷상에서 본인 명의의 휴대폰을 이용하여 주민번호를 입력하지 않고 본인임을 안전하게 식별 및 확인하는 방법을 제공하는 서비스를 말합니다.</li>
+			<li>“이용자”라 함은 서비스의 이용을 위해 자신의 본인확인정보를 회사, 인증대행사 및 타 본인확인기관 등에게 제공하고, 본인임을 확인 받고자 하는 자를 말합니다. </li>
+			<li>“본인확인정보”라 함은 이용자가 입력한 생년월일, 성별, 성명, 내/외국인, 휴대폰번호, 통신사 등 본인 식별에 필요한 이용자의 정보를 말합니다. </li>
+			<li>“접근매체”라 함은 모바일 통신 단말기(피쳐폰, 스마트폰)를 지칭한다.</li>
+			<li>“중복가입확인정보(DI)”라 함은 웹사이트에 가입하고자 하는 이용자의 중복확인을 위해 제공되는 정보를 말합니다.</li>
+			<li>“연계정보(CI)”라 함은 인터넷사업자의 온ㆍ오프라인 서비스 연계 등의 목적으로 이용자를 식별하기 위해 제공되는 정보를 말합니다.</li>
+			<li>“본인확인기관”이라 함은 주민등록번호를 사용하지 아니하고 본인을 확인하는 방법 또는 서비스를 제공하는 자로 방송통신위원회로부터 본인확인기관으로 지정을 받은 자를 의미합니다.</li>
+			<li>“인증대행사”이라 함은 회사를 대신하여 서비스의 제공 및 지원 등의 중계 업무를 담당하는 곳으로 회사와 업무지원에 대한 계약이 완료되어 인터넷사업자에게 서비스를 제공하는 사업자를 말합니다.</li>
+			<li>“인터넷사업자”라 함은 인터넷을 이용하여 정보를 제공하거나, 정보의 제공을 매개하는 일을 업으로 하는 자로 회사 또는 인증 대행사와의 서비스 계약을 통해 운영하며, 인터넷 웹사이트의 이용자에 대한 본인확인정보를 제공받는 사업자를 말합니다.</li>
+		</ul>
+	</dd>
+	<dt>제 3조 (약관의 효력 및 변경)</dt>
+	<dd>
+		<ul>
+			<li>본 약관은 이용자에게 서비스 화면에 게시하거나, 회사 홈페이지(www.uplus.co.kr)에 게시하여 공지함으로써 효력이 발생합니다. </li>
+			<li>회사는 약관의 규제에 관한 법률 및 기타 관련 법령에 위배되지 않는 범위에서 본 약관의 내용을 개정할 수 있으며, 변경된 경우에는 제1항과 같은 방법으로 공지합니다. 다만 “이용자”의 권리와 의무에 관한 중요한 사항은 변경된 내용의 시행 15일 이전에 공지합니다.</li>
+			<li>이용자는 변경된 약관에 대한 내용을 알지 못하여 발생하는 손해 및 피해에 대해서는 회사가 책임을 지지 않습니다.</li>
+		</ul>
+	</dd>
+	<dt>제 4조 (접근매체의 관리 등)</dt>
+	<dd>
+		<ul>
+			<li>이용자는 접근매체를 제3자에게 대여하거나 사용을 위임하거나 양도 또는 담보 목적으로 제공할 수 없습니다. </li>
+			<li>이용자는 자신의 접근매체를 제3자에게 제공 또는 노출하거나 방치하여서는 안되며, 접근매체의 도용이나 위&#8226;변조를 방지하기 위해 충분한 주의를 기울여야 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제 5조 (서비스 이용방법)</dt>
+	<dd>
+		<ul>
+			<li>서비스는 이용자가 주민등록번호를 입력하지 아니하고 본인의 생년월일과 본인 명의로 된 휴대폰정보를 이용하여 본인 식별 또는 본인 확인이 가능하도록 하는 휴대폰인증 서비스 입니다.</li>
+			<li>회사는 인증대행사를 통해 인터넷사업자에게 서비스를 제공하며, 인터넷사업자는 회원가입, ID/PW찾기, 성인인증 등 이용자의 본인확인이 필요한 경우 이용자에게 서비스를 제공 합니다.</li>
+			<li>제2항의 경우 이용자가 자신의 생년월일, 성명, 성별, 내/외국인, 휴대폰번호, 통신사 등의 정보를 입력한 후 입력한 정보가 이용자 본인의 정보와 일치한 경우에는 이용자 본인 명의의 휴대폰번호로 수신된 1회성 비밀번호(이하 “승인번호”)를 정확하게 입력하면 본인 식별 또는 본인 확인이 이루어 집니다.</li>
+			<li>제3항과 같이 본인확인이 완료 된 이용자에 대해서는 본인확인정보와 중복가입확인정보 및 연계정보가 인터넷사업자에게 제공되며, 인터넷사업자가 중복가입확인정보 또는 연계정보 등을 이용하여 이용자 관리 및 컨텐츠를 제공 운영 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제 6조 (서비스 제공시간)</dt>
+	<dd>
+		<ul>
+			<li>회사는 연중무휴 1일 24시간 서비스를 제공함을 원칙으로 합니다. 다만, 회사는 서비스 설비의 장애, 서비스 이용의 폭주 등 기술상의 이유로 서비스를 일시 정지할 수 있고, 서비스 설비 정기 점검 등 운영상의 목적으로 시간을 정하고 공지한 후 서비스를 일시 정지할 수 있습니다.</li>
+		</ul>
+	</dd>
+	<dt>제 7조 (회사의 권리와 의무)</dt>
+	<dd>
+		<ul>
+			<li>회사가 접근매체의 발급주체가 아닌 경우에는 접근매체의 위조나 변조로 발생한 사고로 인하여 이용자에게 발생한 손해에 대하여 배상책임이 없습니다.</li>
+			<li>회사는 이용자가 서비스 이용약관이나 안내사항 등을 확인하지 않아 발생한 손해, 이용자에게 책임있는 사유로 접근매체를 누설 또는 노출하거나 방치한 손해 등 이용자의 부주의에 기인한 손해에 대하여 배상책임이 없습니다.</li>
+			<li>회사는 서비스 제공시 접근매체를 이용하여 이용자의 신원, 권한 및 거래지시의 내용 등을 확인할 수 있습니다.</li>
+			<li>회사는 서비스 제공과 관련하여 인지한 이용자의 본인확인정보를 본인의 승낙 없이 제3자에게 누설하거나 제공하지 않습니다. 단, 국가기관의 요구가 있는 경우, 범죄에 대한 수사상의 목적이 있는 경우 등 기타 관계 법령에서 정한 절차에 따른 요청이 있는 경우에는 그러하지 않습니다.</li>
+			<li>회사는 이용자에게 안정적으로 서비스를 제공하기 위하여 지속적으로 서비스의 예방점검, 유지보수 등을 이행하며 서비스 장애가 발생하는 경우 지체없이 서비스를 복구합니다.</li>
+			<li>회사는 복제폰, 대포폰, 불법 휴대폰 대출(일명 휴대폰깡) 등 시장질서를 교란시키는 불법행위로 의한 피해를 방지하기 위하여 사전통지 없이 서비스를 제한하거나 중지할 수 있습니다.</li>
+		</ul>
+	</dd>
+	<dt>제 8조 (이용자의 의무)</dt>
+	<dd>
+		<ul>
+			<li>
+			이용자는 서비스를 이용함에 있어서 다음 각호에 해당하는 행위를 하여서는 안되며, 회사는 위반 행위에 따르는 일체의 법적 책임을 지지 않습니다.
+			<ol>	
+				<li>타 이용자의 본인확인정보 및 승인번호를 부정하게 사용 및 도용하는 행위</li>
+				<li>회사 또는 제3자의 지식재산권 등 기타 권리를 침해하는 행위</li>
+				<li>범죄 행위 및 범죄적 행위와 관련있는 행위</li>
+				<li>관련 법령에 위배되는 행위</li>
+				<li>기타 서비스의 정상적 운영, 유지 등을 방해하거나 지연시키는 행위</li>
+			</ol>
+			</li>
+			<li>이용자는 본 약관에서 규정하는 사항과 서비스에 대한 이용안내 또는 주의사항 등을 준수하여야 합니다.</li>
+			<li>이용자가 본 약관을 위반하여 회사에 손해가 발생한 경우에는 이용자가 모든 손해를 배상하여야 합니다.</li>
+		</ul>
+	</dd>
+	<dt>제 9조 (본인인증 정보의 제공금지)</dt>
+	<dd>회사는 서비스를 제공함에 있어 취득한 이용자의 정보 또는 자료를 이용자의 동의 없이 제3자에게 제공, 누설하거나 서비스 목적 외에 사용하지 않습니다.</dd>
+	<dt>제 10조 (서비스의 안정성 확보)</dt>
+	<dd>
+		<ul>
+			<li>회사는 서비스의 안전성과 신뢰성을 확보하기 위하여 업무처리지침의 제정 및 시행, 정보 처리시스템 및 전산자료의 관리 등의 관리적 조치와 모니터링 체계 및 해킹방지시스템 구축 및 운영 등의 기술적 조치를 취해야 합니다. </li>
+			<li>회사는 서버 및 통신기기의 정상작동여부 확인을 위하여 정보처리시스템 자원 상태의 감시, 경고 및 제어가 가능한 모니터링 체계를 갖추어야 합니다.</li>
+			<li>
+				“회사”는 해킹 침해 방지를 위하여 다음 각 호의 시스템 및 프로그램을 설치하여 운영합니다.
+				<ol>
+					<li>침입차단시스템 설치</li>
+					<li>침입탐지시스템 설치</li>
+					<li>그 밖에 필요한 보호장비 또는 암호프로그램 등 정보보호시스템 설치</li>			
+				</ol>
+			</li>
+			<li>
+				“회사”는 컴퓨터바이러스 감염을 방지하기 위하여 다음 각 호를 포함한 대책을 수립, 운영하고 있습니다.
+				<ol>
+					<li>출처, 유통경로 및 제작자가 명확하지 아니한 응용프로그램은 사용을 자제하고 불가피할 경우에는 컴퓨터바이러스 검색프로그램으로 진단 및 치료 후 사용할 것</li>
+					<li>컴퓨터바이러스 검색, 치료 프로그램을 설치하고 최신 버전을 유지할 것</li>
+					<li>컴퓨터바이러스 감염에 대비하여 방어, 탐색 및 복구 절차를 마련할 것</li>
+				</ol>
+			</li>
+		</ul>
+	</dd>
+	<dt>제 11조 (이용자의 개인정보보호)</dt>
+	<dd>회사는 관련법령이 정하는 방에 따라서 이용자의 개인정보를 보호하기 위하여 노력하며, 이용자의 개인정보에 관한 사항은 관련 법령 및 회사가 정하는 개인정보취급방침에 정한 바에 따릅니다.</dd>
+	<dt>제 12조 (개인정보의 처리)</dt>
+	<dd>
+	  <ul>
+		  	<li>회사는 서비스 제공을 위하여 수집된 본인확인정보의 취급 및 관리 등의 업무를 스스로 수행함을 원칙으로 하나, 필요한 경우 아래 표와 같이 회사가 선정한 사업자에게 위탁할 수 있습니다.</li>
+	  </ul>
+	</dd>
+	<dt>[개인정보의 취급 위탁]</dt>
+	<dd>
+	  <table class="innerTbl" summary="개인정보 취급 위탁의 수탁자, 위탁업무내용을 보여주는 표입니다.">
+		  <colgroup>
+			  <col style="width:50%;" />
+			  <col style="*" />
+		  </colgroup>
+		  <thead>
+			  <tr>
+				  <th scope="col">수탁자</th>
+				  <th scope="col">위탁업무내용</th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			  <tr>
+				  <td rowspan="2">서울신용평가정보㈜</td>
+				  <td>본인확인정보의 처리</td>
+			  </tr>
+			  <tr>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>한국모바일인증㈜</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td rowspan="2">코리아크레딧뷰로㈜</td>
+				  <td>본인확인정보의 처리</td>
+			  </tr>
+			  <tr>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>NICE신용평가정보㈜</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>㈜ 다날</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>㈜한국사이버결제</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>㈜인포허브</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>㈜드림시큐리티</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>KG모빌리언스</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+			  <tr>
+				  <td>LG U+</td>
+				  <td>본인확인 업무대행</td>
+			  </tr>
+		  </tbody>
+	  </table>
+	  <ul>
+		  <li>회사는 서비스 제공시 인터넷사업자가 필요로 하는 이용자 식별정보(중복가입확인정보, 연계정보)의 생성 및 제공을 위하여 아래 표와 같이 다른 본인확인기관에게 본인확인정보를 제공할 수 있으며, 수집된 식별정보(중복가입확인정보, 연계정보)는 본인 식별 및 확인 위한 목적으로 회사 또는 인증 대행사를 통해 인터넷사업자에게 제공할 수 있습니다.</li>
+	  </ul>
+	</dd>
+	<dt>[개인정보의 이용 및 제3자 제공]</dt>
+	<dd>
+	  <table class="innerTbl" summary="개인정보 취급 위탁의 제공 받는자, 제공목적, 제공정보를 보여주는 표입니다.">
+		  <caption>개입정보의 취급 위탁</caption>
+		  <colgroup>
+			  <col style="width:15%;" />
+			  <col style="*" />
+			  <col style="width:15%;" />
+		  </colgroup>
+		  <thead>
+			  <tr>
+				  <th scope="col" colspan="3">개인정보의 취급 위탁</th>
+			  </tr>
+			  <tr>
+				  <th scope="col">제공 받는자</th>
+				  <th scope="col">제공목적</th>
+				  <th scope="col">제공정보</th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			  <tr>
+				  <td rowspan="2">서울신용평가정보㈜</td>
+				  <td>휴대폰 본인확인(이용 고객에 한함) 서비스 이용</td>
+				  <td rowspan="2">주민등록번호</td>
+			  </tr>
+			  <tr>
+				  <td>※ 중복가입확인정보(DI), 연계정보(CI)의 생성 및 제공</td>
+			  </tr>
+			  <tr>
+				  <td rowspan="2">코리아크레딧뷰로㈜</td>
+				  <td>휴대폰 본인확인(이용 고객에 한함) 서비스 이용</td>
+				  <td rowspan="2">주민등록번호</td>
+			  </tr>
+			  <tr>
+				  <td>※ 중복가입확인정보(DI), 연계정보(CI)의 생성 및 제공</td>
+			  </tr>
+		  </tbody>
+	  </table>
+	  <ul>
+		  <li>개인정보 처리 및 위탁 등에 관한 사항은 관련법령 및 회사가 정하는 개인정보취급방침에 정한 바에 따릅니다. </li>
+	  </ul>
+	  </dd>
+	  <dt>제 13조 (약관 외 준칙)</dt>
+	  <dd>본 약관에 명시되지 아니한 사항에 대해서는 정보통신망 이용 촉진 및 정보보호 등에 관한 법률 등 기타 관련 법령 또는 상관례에 따릅니다.</dd>
+	  <dt>부칙</dt>
+	  <dd>(시행일) 이 약관은 공시한 날로부터 시행합니다.</dd>
+	  <!-- LG U+-->
+  </dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> 
+	<!--// 통신사 이용약관에 대한 동의(필수) end-->
+	
+	<!-- 개인정보 이용 및 제공에 대한 동의(필수) -->
+	<div id="commonAuthStipLayer3" class="wpoplayer layer faullpopup" style="display:none">
+		<div class="mw_wrap">
+			<div class="mw_header">
+				<h1>이용약관</h1>
+				<a href="#" class="wbtn_close">닫기</a>
+			</div>
+	
+			<div class="mw_content">
+				<div class="mw_section">
+					<h2 class="wtits">개인정보 수집&bull;이용&bull;제공 동의</h2><!-- 1224: 타이틀추가 -->
+					<div class="agreeWrap"><!-- 1224: agreeWrap class변경 -->
+									<dl>
+			    <!-- SKT -->
+			    <dt>[SK텔레콤 귀중]</dt>
+			    <dd>본인은 SK텔레콤(주)(이하 ‘회사’라 합니다)가 제공하는 본인확인서비스(이하 ‘서비스’라 합니다)를 이용하기 위해, 다음과 같이 ‘회사’가 본인의 개인정보를 수집/이용하고, 개인정보의 취급을 위탁하는 것에 동의합니다.</dd>
+	                    <dt>1. 수집항목</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>이용자의 성명, 이동전화번호, 가입한 이동전화 회사, 생년월일, 성별</li>
+	                            <li>연계정보(CI), 중복가입확인정보(DI)</li>
+	                            <li>이용자가 이용하는 웹사이트 또는 Application 정보, 이용일시</li>
+								<li>내외국인 여부</li>
+								<li>가입한 이동전화회사 및 이동전화브랜드</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>2. 이용목적</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>이용자가 웹사이트 또는 Application에 입력한 본인확인정보의 정확성 여부 확인(본인확인서비스 제공)</li>
+					<li>해당 웹사이트 또는 Application에 연계정보(CI)/중복가입확인정보(DI) 전송</li>
+					<li>서비스 관련 상담 및 불만 처리 등</li>
+					<li>이용 웹사이트/Application 정보 등에 대한 분석 및 세분화를 통한, 이용자의 서비스 이용 선호도 분석</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>3. 개인정보의 보유기간 및 이용기간</dt>
+	                    <dd>
+	                        <ul>
+	                            <li><strong class="f_16 underline">이용자가 서비스를 이용하는 기간에 한하여 보유 및 이용. 다만, 아래의 경우는 제외</strong></li>
+								<li><strong class="f_16 underline">법령에서 정하는 경우 해당 기간까지 보유(상세 사항은 회사의 개인정보취급방침에 기재된 바에 따름)</strong></li>
+	                        </ul>
+	                    </dd>
+	                    <dt>4. 본인확인서비스 제공을 위한 개인정보의 취급위탁 </dt>
+	                    <dd>
+							수탁자 : (주)다날, (주)드림시큐리티, (주)케이지모빌리언스, (주)한국사이버결제, 한국모바일인증(주), 씨앤케이소프트(주), 수미온(주), SK플래닛(주), 엠드림커뮤니케이션(주), NICE평가정보(주), 서울신용평가정보(주)<br>
+							취급위탁 업무 : 본인확인정보의 정확성 여부 확인(본인확인서비스 제공), 연계정보(CI)/중복가입확인정보(DI) 생성 및 전송, 서비스 관련 상담 및 불만 처리, 휴대폰인증보호 서비스, 이용자의 서비스 이용 선호도 분석정보 제공관련 시스템 구축&middot;광고매체 연동 및 위탁영업 등<br>
+							※ 수탁자의 상세 개인정보 취급 위탁 내용은 각 수탁자가 정하는 절차와 방법에 따라 수탁자 홈페이지 등에 게시된 수탁자의 개인정보 취급방침 및 제3자 제공 동의 방침 등에 따릅니다.
+						</dd>
+	                    <dt>5. 위 개인정보 수집&middot;이용 및 취급위탁에 동의하지 않으실 경우, 서비스를 이용하실 수 없습니다.</dt>
+						<dd>※ 회사가 제공하는 서비스와 관련된 개인정보의 취급과 관련된 사항은, 회사의 개인정보취급방침(회사 홈페이지 www.sktelecom.com )에 따릅니다.</dd>
+						<dt>[NICE평가정보(주) 귀중]</dt>
+						<dd>NICE평가정보(주)(이하 ‘회사’)는 SK텔레콤(주)의 업무를 대행하여 휴대폰본인확인서비스를 제공함에 있어 고객으로부터 개인정보를 수집하고 이용하기 위해 ‘정보통신망 이용촉진 및 정보보호에 관한 법률’에 따라서 다음과 같이 본인의 동의를 받습니다.</dd>
+						<dt>1. 개인정보의 내용</dt>
+						<dd>
+							<ul>
+	                            <li>
+									정보항목
+									<ol>
+										<li>생년월일, 성명, 성별, 내/외국인 구분, 휴대폰번호, 가입한 이동통신사, IP주소</li>
+									</ol>
+								</li>
+								<li>
+									수집방법
+									<ol>
+										<li>본인인증 요청시 회원사 서비스 페이지 또는 본인인증 팝업창 페이지에서 이용자가 직접 입력</li>
+										<li>본인인증 과정에서 시스템에서 생성되는 정보 수집(Ex. IP주소)</li>
+									</ol>
+								</li>
+	                        </ul>
+						</dd>
+						<dt>2. 개인정보의 이용목적과 제공정보</dt>
+						<dd>
+							<ul>
+								<li>이용 목적
+									<ol>
+										<li><strong class="f_16 underline">고객의 회원가입, ID/PW찾기, 거래동의 등을 위한 휴대폰 본인확인 결과</strong></li>
+										<li><strong class="f_16 underline">휴대폰 소지 확인을 위한 SMS 인증번호 전송</strong></li>
+										<li><strong class="f_16 underline">부정 이용 방지 및 수사의뢰</strong></li>
+										<li><strong class="f_16 underline">휴대폰번호보호서비스 해제(서비스 가입자에 한함)</strong></li>
+										<li><strong class="f_16 underline">기타 법률에서 정한 목적</strong></li>
+									</ol>
+								</li>
+								<li>제공하는 개인정보
+									<ol>
+										<li>성명, 성별, 생년월일, 내/외국인, 휴대폰번호, 이동통신사, IP주소 <strong class="f_16 underline">[제공사 : 서비스 회원사]</strong></li>
+										<li>성명, 성별, 생년월일, 휴대폰번호, 이동통신사 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+,모빌리언스, 다날]</strong></li>
+										<li>휴대폰번호 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+, 삼성SDS, 모빌리언스, SK네트웍스, 다날]</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<dt>3. 개인정보의 보유 및 이용기간</dt>
+						<dd>
+							이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체없이 파기합니다. 단, 다음의 정보에 대해서는 아래의 이유로 명기한 기간 동안 보유합니다.
+							<ul>
+								<li>
+									회사 내부 방침에 의한 정보보유 사유<br>
+									<ol>
+										<li>본인확인 발생 및 차단기록, 휴대폰번호</li>
+										<li>보유 이유: 부정 이용 방지 및 민원 처리</li>
+										<li>보유 기간: <strong class="f_16 underline">5년</strong></li>
+									</ol>
+								</li>
+								<li>관계법령에 의한 정보보유 사유
+									<ol>
+										<li>이용자 불만 또는 분쟁 처리에 관한 기록</li>
+										<li>보유 이유: 전자상거래 등에서의 소비자보호에 관한 법률</li>
+										<li>보유 기간: <strong class="f_16 underline">3년</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<!--// SKT -->
+						<!-- KT -->
+						<dt>[(주)케이티 귀중]</dt>
+						<dd>(주)케이티(이하 ‘회사’라 함)가 제공하는 본인확인서비스를 이용하기 위해, 다음과 같이 ‘회사’가 본인의 개인정보를 수집 및 이용하고, 개인정보의 취급을 위탁하는 것에 동의합니다.</dd>
+	                    <dt>1. 수집항목</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>고객의 생년월일, 이동전화번호, 성명, 성별, 내/외국인 구분</li>
+								<li>연계정보(CI), 중복가입확인정보(DI)</li>
+								<li>고객이 이용하는 웹사이트 등</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>2. 이용목적</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>고객이 웹사이트 또는 Application 등에 입력한 본인확인정보의 정확성 여부 확인</li>
+								<li>해당 웹사이트 또는 Application 등에 연계정보(CI)와 중복가입확인정보)DI) 전송</li>
+								<li>서비스 관련 상담 및 불만 처리</li>
+								<li>기타 법룰에서 정한 목적</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>3. 개인정보의 보유 및 이용기간</dt>
+	                    <dd>
+							<strong class="f_16 underline">"회사"는 이용자의 개인정보를 이용목적이 달성되거나 보유 및 보존기간이 종료하면 해당 정보를 지체없이 파기 하며 별도의 보관을 하지 않습니다. 단, 관련 법령 및 회사방침에 따라 보존하는 목적과 기간은 아래와 같습니다.</strong>
+							<ul>
+								<li>소비자의 불만 또는 분쟁처리에 관한 기록 : <strong class="f_16 underline">3년</strong>(전자상거래등에서의 소비자보호에 관한 법률)</li>
+							</ul>
+						</dd>
+	                    <dt>4. 본인확인서비스 제공을 위한 개인정보의 취급 위탁</dt>
+	                    <dd>
+							<ul>
+								<li>수탁자 : NICE평가정보</li>
+								<li>취급위탁 업무 : 본인확인정보의 정확성 여부 확인, 연계정보(CI) 및 중복가입확인정보(DI) 전송, 서비스 관련 상담 및 불만 처리 등</li>
+							</ul>
+						</dd>
+	                    <dt>5. 상기 개인정보 수집 및 이용과 취급위탁에 동의하지 않는 경우, 서비스를 이용할 수 없습니다.</dt>
+						<dd>
+							‘회사’가 제공하는 서비스의 개인정보 취급과 관련된 사항은 아래의 ‘회사’ 홈페이지에 기재된 개인정보취급방침에 따릅니다.
+							<ul>
+								<li>(주)케이티 : www.kt.com</li>
+							</ul>
+							본인은 상기 내용을 숙지하였으며 이에 동의합니다.
+						</dd>
+						<dt>[NICE평가정보(주) 귀중]</dt>
+						<dd>NICE평가정보(주)(이하 ‘회사’)는 (주)케이티의 업무를 대행하여 휴대폰본인확인서비스를 제공함에 있어 고객으로부터 개인정보를 수집하고 이용하기 위해 ‘정보통신망 이용촉진 및 정보보호에 관한 법률’에 따라서 다음과 같이 본인의 동의를 받습니다.</dd>
+						<dt>1. 개인정보의 내용</dt>
+						<dd>
+							<ul>
+	                            <li>
+									정보항목
+									<ol>
+										<li>생년월일, 성명, 성별, 내/외국인 구분, 휴대폰번호, 가입한 이동통신사, IP주소</li>
+									</ol>
+								</li>
+								<li>
+									수집방법
+									<ol>
+										<li>본인인증 요청시 회원사 서비스 페이지 또는 본인인증 팝업창 페이지에서 이용자가 직접 입력</li>
+										<li>본인인증 과정에서 시스템에서 생성되는 정보 수집(Ex. IP주소)</li>
+									</ol>
+								</li>
+	                        </ul>
+						</dd>
+						<dt>2. 개인정보의 이용목적과 제공정보</dt>
+						<dd>
+							<ul>
+								<li>이용 목적
+									<ol>
+										<li><strong class="f_16 underline">고객의 회원가입, ID/PW찾기, 거래동의 등을 위한 휴대폰 본인확인 결과</strong></li>
+										<li><strong class="f_16 underline">휴대폰 소지 확인을 위한 SMS 인증번호 전송</strong></li>
+										<li><strong class="f_16 underline">부정 이용 방지 및 수사의뢰</strong></li>
+										<li><strong class="f_16 underline">휴대폰번호보호서비스 해제(서비스 가입자에 한함)</strong></li>
+										<li><strong class="f_16 underline">기타 법률에서 정한 목적</strong></li>
+									</ol>
+								</li>
+								<li>제공하는 개인정보
+									<ol>
+										<li>성명, 성별, 생년월일, 내/외국인, 휴대폰번호, 이동통신사, IP주소 <strong class="f_16 underline">[제공사 : 서비스 회원사]</strong></li>
+										<li>성명, 성별, 생년월일, 휴대폰번호, 이동통신사 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+,모빌리언스, 다날]</strong></li>
+										<li>휴대폰번호 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+, 삼성SDS, 모빌리언스, SK네트웍스, 다날]</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<dt>3. 개인정보의 보유 및 이용기간</dt>
+						<dd>
+							<strong class="f_16 underline">이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체없이 파기합니다. 단, 다음의 정보에 대해서는 아래의 이유로 명기한 기간 동안 보유합니다.</strong>
+							<ul>
+								<li>회사 내부 방침에 의한 정보보유 사유
+									<ol>
+										<li>본인확인 발생 및 차단기록, 휴대폰번호</li>
+										<li>보유 이유: 부정 이용 방지 및 민원 처리</li>
+										<li>보유 기간: <strong class="f_16 underline">5년</strong></li>
+									</ol>
+								</li>
+								<li>관계법령에 의한 정보보유 사유
+									<ol>
+										<li>이용자 불만 또는 분쟁 처리에 관한 기록</li>
+										<li>보유 이유: 전자상거래 등에서의 소비자보호에 관한 법률</li>
+										<li>보유 기간: <strong class="f_16 underline">3년</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<!--// KT -->
+						<!-- LG U+ -->
+						<dt>[LG유플러스(주) 귀중]</dt>
+						<dd>LG유플러스(주) (이하 ‘회사’라 함)가 제공하는 본인확인서비스를 이용하기 위해, 다음과 같이 ‘회사’가 본인의 개인정보를 수집 및 이용하고, 개인정보의 취급을 위탁하는 것에 동의합니다.</dd>
+	                    <dt>1. 수집항목</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>고객의 생년월일, 이동전화번호, 성명, 성별, 내/외국인 구분</li>
+								<li>연계정보(CI), 중복가입확인정보(DI)</li>
+								<li>고객이 이용하는 웹사이트 등</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>2. 이용목적</dt>
+	                    <dd>
+	                        <ul>
+	                            <li>고객이 웹사이트 또는 Application 등에 입력한 본인확인정보의 정확성 여부 확인</li>
+								<li>해당 웹사이트 또는 Application 등에 연계정보(CI)와 중복가입확인정보)DI) 전송</li>
+								<li>서비스 관련 상담 및 불만 처리</li>
+								<li>기타 법룰에서 정한 목적</li>
+	                        </ul>
+	                    </dd>
+	                    <dt>3. 개인정보의 보유 및 이용기간</dt>
+	                    <dd>
+							<ul>
+								<li><strong class="f_16 underline">고객이 서비스를 이용하는 기간에 한하여 보유 및 이용을 원칙으로 하되, 법률에서 정하는 경우 해당 기간까지 보유 및 이용(세부사항은 &lsquo;회사&rsquo;의 개인정보취급방침에 따름)</strong></li>
+							</ul>
+						</dd>
+	                    <dt>4. 본인확인서비스 제공을 위한 개인정보의 취급 위탁</dt>
+	                    <dd>
+							<ul>
+								<li>수탁자 : NICE평가정보</li>
+								<li>취급위탁 업무 : 본인확인정보의 정확성 여부 확인, 연계정보(CI) 및 중복가입확인정보(DI) 전송, 서비스 관련 상담 및 불만 처리 등</li>
+							</ul>
+						</dd>
+	                    <dt>5. 상기 개인정보 수집 및 이용과 취급위탁에 동의하지 않는 경우, 서비스를 이용할 수 없습니다.</dt>
+						<dd>
+							‘회사’가 제공하는 서비스의 개인정보 취급과 관련된 사항은 아래의 ‘회사’ 홈페이지에 기재된 개인정보취급방침에 따릅니다.
+							<ul>
+								<li>LG유플러스(주)  : www.lguplus.co.kr</li>
+							</ul>
+							본인은 상기 내용을 숙지하였으며 이에 동의합니다.
+						</dd>
+						<dt>[NICE평가정보(주) 귀중]</dt>
+						<dd>NICE평가정보(주)(이하 ‘회사’)는 LG유플러스(주) 의 업무를 대행하여 휴대폰본인확인서비스를 제공함에 있어 고객으로부터 개인정보를 수집하고 이용하기 위해 ‘정보통신망 이용촉진 및 정보보호에 관한 법률’에 따라서 다음과 같이 본인의 동의를 받습니다.</dd>
+						<dt>1. 개인정보의 내용</dt>
+						<dd>
+							<ul>
+	                            <li>
+									정보항목
+									<ol>
+										<li>생년월일, 성명, 성별, 내/외국인 구분, 휴대폰번호, 가입한 이동통신사, IP주소</li>
+									</ol>
+								</li>
+								<li>
+									수집방법
+									<ol>
+										<li>본인인증 요청시 회원사 서비스 페이지 또는 본인인증 팝업창 페이지에서 이용자가 직접 입력</li>
+										<li>본인인증 과정에서 시스템에서 생성되는 정보 수집(Ex. IP주소)</li>
+									</ol>
+									<br>
+								</li>
+	                        </ul>
+						</dd>
+						<dt>2. 개인정보의 이용목적과 제공정보</dt>
+						<dd>
+							<ul>
+								<li>이용 목적
+									<ol>
+										<li><strong class="f_16 underline">고객의 회원가입, ID/PW찾기, 거래동의 등을 위한 휴대폰 본인확인 결과</strong></li>
+										<li><strong class="f_16 underline">휴대폰 소지 확인을 위한 SMS 인증번호 전송</strong></li>
+										<li><strong class="f_16 underline">부정 이용 방지 및 수사의뢰</strong></li>
+										<li><strong class="f_16 underline">휴대폰번호보호서비스 해제(서비스 가입자에 한함)</strong></li>
+										<li><strong class="f_16 underline">기타 법률에서 정한 목적</strong></li>
+									</ol>
+								</li>
+								<li>제공하는 개인정보
+									<ol>
+										<li>성명, 성별, 생년월일, 내/외국인, 휴대폰번호, 이동통신사, IP주소 <strong class="f_16 underline">[제공사 : 서비스 회원사]</strong></li>
+										<li>성명, 성별, 생년월일, 휴대폰번호, 이동통신사 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+]</strong></li>
+										<li>휴대폰번호 <strong class="f_16 underline">[제공사 : SKT, KT, LGU+]</strong></li>
+										<li>IP주소 <strong class="f_16 underline">[제공사 : 서비스 회원사]</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<dt>3. 개인정보의 보유 및 이용기간</dt>
+						<dd>
+							<strong class="f_16 underline">이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체없이 파기합니다. 단, 다음의 정보에 대해서는 아래의 이유로 명기한 기간 동안 보유합니다.</strong>
+							<ul>
+								<li>회사 내부 방침에 의한 정보보유 사유
+									<ol>
+										<li>본인확인 발생 및 차단기록, 휴대폰번호</li>
+										<li>보유 이유: 부정 이용 방지 및 민원 처리</li>
+										<li>보유 기간: <strong class="f_16 underline">5년</strong></li>
+									</ol>
+								</li>
+								<li>관계법령에 의한 정보보유 사유
+									<ol>
+										<li>이용자 불만 또는 분쟁 처리에 관한 기록</li>
+										<li>보유 이유: 전자상거래 등에서의 소비자보호에 관한 법률</li>
+										<li>보유 기간: <strong class="f_16 underline">3년</strong></li>
+									</ol>
+								</li>
+							</ul>
+						</dd>
+						<!--// LG U+ -->
+	                </dl>
+					
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--// 개인정보 이용 및 제공에 대한 동의(필수) end-->
+	
+	<!-- 휴대폰 본인확인서비스 이용 약관에 대한 동의(필수) -->
+	<div id="commonAuthStipLayer4"  class="wpoplayer layer faullpopup" style="display:none">
+		<div class="mw_wrap">
+			<div class="mw_header">
+				<h1>이용약관</h1>
+				<a href="#" class="wbtn_close">닫기</a>
+			</div>
+	
+			<div class="mw_content">
+				<div class="mw_section">
+					<h2 class="wtits">휴대폰 본인확인서비스 이용약관에 대한 동의</h2><!-- 1224: 타이틀추가 -->
+					<div class="termsuse_area"><!-- 1224: termsuse_area class변경 -->
+											<strong>[서비스 이용약관]</strong>
+					
+					<div class="group">
+						<strong>제1조 (목적)</strong>
+						<p>본 약관은 NICE평가정보(주) (이하 "회사"라 한다)이 제공하는 본인확인서비스(이하 "서비스"라 한다)에 관한 이용조건 및 절차 등 기본적인 사항을 규정함을 목적으로 합니다.</p>
+					</div>
+					
+					<div class="group">
+						<strong>제2조 (약관의 효력 및 변경)</strong>
+						<ol>
+							<li>1. 본 약관은 "이용자"에게 "서비스" 화면에 게시하거나, 기타의 방법으로 공지하는 것으로 효력이 발생합니다.</li>
+							<li>2. "회사"는 약관의 규제에 관한 법률 및 기타 관련 법령에 위배되지 않는 범위에서 본 약관의 내용을 개정할 수 있으며, 변경된 경우에는 제1항과 같은 방법으로 공지합니다. 다만 "이용자"의 권리와 의무에 관한 중요한 사항은 변경된 내용의 시행 15일 이전에 공지합니다.</li>
+							<li>3. "이용자"는 변경된 약관에 대한 내용을 알지 못하여 발생하는 손해 및 피해에 대해서는 "회사"가 책임을 지지 않습니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제3조 (약관 외 준칙)</strong>
+						<p>본 약관에 명시되지 아니한 사항에 대해서는 정보통신망 이용 촉진 및 정보보호 등에 관한 법률등 기타 관련 법령 또는 상관례에 따릅니다.</p>
+					</div>
+					
+					<div class="group">
+						<strong>제4조 (용어의 정의)</strong>
+						<p>본 약관에서 사용하는 용어의 정의는 다음과 같습니다.</p>
+						<ol>
+							<li>1. "본인확인서비스"라 함은 "이용자"가 인터넷상에서 휴대폰 등의 인증수단을 이용하여, 본인임을 안전하게 식별 및 확인해 주는 서비스를 말합니다.</li>
+							<li>2. "이용자"라 함은 "회사"에서 제공하는 "서비스"의 이용을 위해 자신의 "본인확인정보"를 "회사" 및 "본인확인기관" 등에게 제공하고, 본인임을 확인 받고자 하는 자를 말합니다.</li>
+							<li>3. "본인확인정보"라 함은 "이용자"가 입력한 생년월일, 성별, 성명, 내/외국인, 휴대폰번호, 통신사 등 본인 식별에 필요한 "이용자"의 정보를 말합니다. </li>
+							<li>4. "본인확인기관"이라 함은 주민등록번호를 사용하지 아니하고 본인을 확인하는 방법 또는 서비스를 제공하는 자로 방송통신위원회로부터 본인확인기관으로 지정을 받은 자를 의미합니다.</li>
+							<li>5. "인터넷사업자"라 함은 인터넷을 이용하여 정보를 제공하거나, 정보의 제공을 매개하는 일을 업으로 하는 자로 "회사"와 계약을 통해 운영하며, 인터넷 웹사이트의 "이용자"에 대한 "본인확인정보"를 제공 받는 사업체를 말합니다.</li>
+							<li>6. "중복가입확인정보"라 함은 웹사이트에 가입하고자 하는 이용자의 중복 확인을 위해 제공되는 정보를 말합니다. </li>
+							<li>7. "연계정보" 라 함은 "인터넷사업자"의 온ㆍ오프라인 서비스 연계 등의 목적으로 "이용자"를 식별하기 위해 제공되는 정보를 말합니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제5조 (회사의 의무)</strong>
+						<ol>
+							<li>1. "회사"는 "서비스" 제공과 관련하여 인지한 "이용자"의 "본인확인정보"를 본인의 승낙 없이 제3자에게 누설하거나 배포하지 않습니다. 단, 국가기관의 요구가 있는 경우, 범죄에 대한 수사상의 목적이 있는 경우 등 기타 관계법령에서 정한 절차에 따른 요청이 있는 경우에는 그러하지 않습니다.</li>
+							<li>2. "회사"는 "이용자"에게 안전한 "서비스" 제공을 위하여 지속적으로 "서비스"의 예방점검, 유지보수 등을 이행하며, "서비스"의 장애가 발생하는 경우, 이를 지체 없이 수리 및 복구합니다. </li>
+							<li>3. "회사"는 "이용자"가 제기한 의견, 불만이 타당하다고 인정되는 경우 적절한 절차를 거쳐 이를 지체 없이 처리하거나 처리에 관한 일정을 통지하여야 합니다. </li>
+							<li>4. "회사"는 접근매체의 발급 주체가 아닌 경우에는 접근 매체의 위조나 변조로 발생한 사고로 인하여, "이용자"에게 발생한 손해에 대하여 배상책임이 없습니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제6조 (이용자의 의무)</strong>
+						<ol>
+							<li>
+								1. "이용자"는 "서비스"를 이용함에 있어서 다음 각호에 해당하는 행위를 하여서는 안되며, "회사"는 위반 행위에 따르는 일체의 법적 책임을 지지 않습니다.
+								<ol>
+									<li>1) 타 "이용자"의 "본인확인정보"를 부정하게 사용 및 도용하는 행위 </li>
+									<li>2) "회사"의 저작권, 제3자의 저작원 등 기타 권리를 침해하는 행위 </li>
+									<li>3) 범죄 행위 </li>
+									<li>4) 기타 관련 법령에 위배되는 행위</li>
+								</ol>
+							</li>
+							<li>2. "이용자"는 자신의 접근매체를 제3자에게 누설 또는 노출하거나 방치하여서는 안되며, 접근 매체의 도용이나 위조 또는 변조를 방지</li>하기 위하여 충분한 주의를 기울여야 합니다.
+							<li>3. "이용자"는 본 약관에서 규정하는 사항과 "서비스"에 대한 이용안내 또는 주의사항을 준수하여야 합니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제7조 (서비스의 내용)</strong>
+						<ol>
+							<li>1. "서비스"는 "이용자"가 주민등록번호의 입력 없이, 본인명의로 된 인증수단(휴대폰 등)을 이용하여 본인 확인이 가능한 인증 서비스 입니다.</li>
+							<li>2. "인터넷사업자"는 회원가입, ID/PW찾기, 성인인증, 기타 본인확인이 필요한 컨텐츠 요청 시 "이용자"에게 "서비스"를 제공 합니다. </li>
+							<li>3. "이용자"는 자신의 생년월일, 성명, 성별, 내/외국인, 휴대폰번호, 통신사 등의 정보를 입력 후, 입력한 정보가 일치한 경우 해당 휴대폰번호로 1회성 비밀번호(승인번호)가 발송되며, 수신된 승인번호를 정확하게 입력하는 것으로 본인 확인이 이루어 집니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제8조 (서비스 제공시간)</strong>
+						<ol>
+							<li>1. "서비스"의 이용은 연중무휴 1일 24시간을 원칙으로 합니다. 다만, 정기 점검 및 기타 기술상의 이유로 "서비스"가 일시 중지될 수 있고 또한, 운영상의 목적으로 "회사"가 정한 기간에도 일시 중지될 수 있습니다.</li>
+							<li>2. "회사"는 효율적인 업무 수행을 위하여 필요하다고 판단하는 경우 "서비스"를 일정 범위로 분할 하여 각 범위 별로 이용가능 시간을 달리 정할 수 있으며, 이 경우 그 내용을 공지 합니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제9조 (서비스 제공의 중지)</strong>
+						<ol>
+							<li>
+								1. "회사"는 다음 각 호에 해당하는 사유가 있는 경우 "서비스" 제공의 전부 또는 일부를 중지할 수 있습니다.
+								<ol>
+									<li>1) "서비스"를 위한 설비의 보수 등 공사로 인한 부득이한 경우</li>
+									<li>2) 정전, 제반 설비의 장애 또는 이용량의 폭주 등으로 정상적인 "서비스" 이용에 지장이 있는 경우</li>
+									<li>3) "서비스" 계약종료 등과 같은 "인터넷사업자"의 제반 사정으로 "서비스"를 유지할 수 업는 경우</li>
+									<li>4) 기타 천재지변, 국가비상사태 등 불가항력적 사유가 있는 경우</li>
+								</ol>
+							</li>
+							<li>2. "회사"는 "서비스"의 변경, 중지로 발생하는 문제에 대해서는 어떠한 책임도 지지 않습니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제10조 (서비스의 안전성 확보)</strong>
+						<ol>
+							<li>1. "회사"는 "서비스"의 안전성과 신뢰성을 확보하기 위하여 업무처리지침의 제정 및 시행, 정보처리시스템 및 전산자료의 관리 등의 관리적 조치와 모니터링 체계 및 해킹방지시스템 구축 및 운영 등의 기술적 조치를 취하고 있습니다.</li>
+							<li>2. "회사"는 서버 및 통신기기의 정상작동여부 확인을 위하여 정보처리시스템 자원 상태의 감시, 경고 및 제어가 가능한 모니터링 체계를 갖추고 있습니다. </li>
+							<li>
+								3. "회사"는 해킹 침해 방지를 위하여 다음 각 호의 시스템 및 프로그램을 설치하여 운영합니다. 
+								<ol>
+									<li>1) 침입차단시스템 설치</li>
+									<li>2) 침입탐지시스템 설치</li>
+									<li>3) 그 밖에 필요한 보호장비 또는 암호프로그램 등 정보보호시스템 설치</li>
+								</ol>
+							</li>
+							<li>
+								4. "회사"는 컴퓨터바이러스 감염을 방지하기 위하여 다음 각 호를 포함한 대책을 수립, 운영하고 있습니다.
+								<ol>
+									<li>1) 출처, 유통경로 및 제작자가 명확하지 아니한 응용프로그램은 사용을 자제하고 불가피할 경우에는 컴퓨터바이러스 검색프로그램으로 진단 및 치료 후 사용할 것</li>
+									<li>2) 컴퓨터바이러스 검색, 치료 프로그램을 설치하고 최신 버전을 유지할 것 </li>
+									<li>3) 컴퓨터바이러스 감염에 대비하여 방어, 탐색 및 복구 절차를 마련할 것</li>
+								</ol>
+							</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제11조 (이용자의 개인정보보호)</strong>
+						<p>"회사"는 관련법령이 정하는 바에 따라서 "이용자"의 개인정보를 보호하기 위하여 노력합니다. "이용자"의 개인정보보호에 관한 사항은 관련법령 및 "회사"가 정하는 "개인정보취급방침"에 정한 바에 따릅니다.</p>
+					</div>
+					
+					<div class="group">
+						<strong>제12조 (개인정보의 위탁)</strong>
+						<p>"회사"는 수집된 개인정보의 취급 및 관리 등의 업무를 스스로 수행함을 원칙으로 하나, 필요한 경우 업무의 일부 또는 전부를 "회사"가 선정한 회사에 위탁할 수 있습니다. 개인정보의 위탁에 관한 사항은 관련법령 및 "회사"가 정하는 "개인정보취급방침"에 정한 바에 따릅니다.</p>
+					</div>
+					
+					<div class="group">
+						<strong>제13조 (손해배상)</strong>
+						<p>"회사"는 "서비스"의 이용과 관련하여 "이용자"에게 발생한 "회사"측의 중과실에 의한 손해를 제외한 어떠한 손해에 관하여도 책임을 지지 않습니다.</p>
+					</div>
+					
+					<div class="group">
+						<strong>제14조 (회사와 인터넷사업자와의 관계)</strong>
+						<ol>
+							<li>1. "회사"는 "인터넷사업자"가 제공하는 서비스 상품 또는 용역 등에 대하여 보증책임을 지지 않습니다.</li>
+							<li>2. "회사"와 "인터넷사업자"는 독자적으로 사이트를 운영하며, "인터넷사업자"와 "이용자"간에 행해진 거래에 대하여 고의 또는 중과실이 있는 경우를 제외하고는 어떠한 책임도 지지 않습니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제15조 (면책)</strong>
+						<ol>
+							<li>1. "회사"의 고의 또는 과실 없이 "서비스"를 제공할 수 없는 경우에는 "서비스" 제공에 관한 책임이 면제됩니다.</li>
+							<li>2. "회사"는 "이용자" 또는 제3자 측의 사정으로 인한 "서비스" 이용의 장애에 대하여 책임을 지지 않습니다. </li>
+							<li>3. "회사"는 고의 또는 중과실이 없는 한 "이용자"가 "서비스"를 이용하여 기대하는 수익을 상실한 것에 대하여 책임을 지지 않으며 그밖에 "서비스"를 통하여 얻은 자료로 인한 손해에 관하여 책임을 지지 않습니다.</li>
+							<li>4. "회사"는 "이용자"가 "서비스"에 게재한 정보, 자료, 사실의 신뢰도, 정확성 등 내용에 관하여는 고의 또는 중과실이 없는 한 일체의 책임을 지지 않습니다. </li>
+							<li>5. 계약만료 또는 요금 미납의 결과로 사용자계정이 정지되거나, 보관 파일이 삭제된 후 이에 따르는 손해에 대하여 책임을 지지 않습니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>제16조 (관할 법원)</strong>
+						<ol>
+							<li>1. "회사"와 "이용자"는 "서비스"와 관련하여 분쟁이 발생한 경우, 원만하게 해결하기 위하여 필요한 모든 노력을 하여야 합니다.</li>
+							<li>2. 제1항의 협의에서도 분쟁이 해결되지 않은 경우 등, 약관과 관련하여 분쟁으로 인한 소송이 제기될 경우 동 소송은 서울중앙지방법원을 관할 법원으로 합니다.</li>
+						</ol>
+					</div>
+					
+					<div class="group">
+						<strong>부칙</strong>
+						<p>(시행일) 이 약관은 공시한 날로부터 시행합니다.</p>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> 
+	<!-- 휴대폰 본인확인서비스 이용 약관에 대한 동의(필수) END -->
+	
+	<!--알뜰폰 업체 확인 레이어팝업 -->
+	<div id="commonAuthStipLayer5"  class="wpoplayer layer" style="display:none">
+		<div class="wlayer_popup ">
+			<div class="pop_layer">
+				<div class="wpop_header">
+					<h1 class="blind">알뜰폰업체확인</h1>
+					<a href="#none" class="wbtn_alim_close cbtn" title="닫기">닫기</a>
+				</div>
+				<div class="wpop_content wfrugal_cnt">
+					<h2>KT(알뜰폰)</h2>
+					<div class="txt">CJ헬로비전, KT 파워텔, 홈플러스, 씨엔 커뮤니케이션, 에넥스텔레콤, 위너스텔, 에이씨앤코리아, 온세텔레콤, KT텔레캅, 프리텔레콤, 에버그린모바일, 케이티스 앤 텔레콤, 에스원</div>
+					<h2>SKT(알뜰폰)</h2>
+					<div class="txt">KCT(Tplus), SK텔링크(7mobile), KD링크(에코모바일), 큰사람컴퓨터(이야기), 이마트(모바일알뜰폰), 스마텔(스마텔), 아이즈비전(아이즈모바일), 에스원(에스원 안심폰), 유니컴즈(Mobing)</div>
+					<h2>LGU+(알뜰폰)</h2>
+					<div class="txt">㈜스페이스네트(프리티), 머천드코리아(마이월드), ㈜엠티티텔레콤(메리큐), 홈플러스㈜, ㈜알뜰폰, ㈜미디어로그</div>
+				</div>
+			</div>
+		</div>
+		<div class="bg"></div>
+	</div>
+	
+	<div id="commonAuthCvCStip" class="wpoplayer layer" style="display:none">
+		<div class="wlayer_popup ">
+			<div class="pop_layer">
+				<div class="wpop_header">
+					<h1 class="blind">CVC 안내</h1>
+					<a href="#none" class="wbtn_alim_close cbtn" title="닫기">닫기</a>
+				</div>
+				<div class="wpop_content wcardcvc_cnt">
+					<div class="btxt">카드 뒷면의 숫자 중<br>마지막 3자리를 확인해주세요.</div>
+					<div class="stxt">카드 인증코드는 세자리 수로 표시된<br>신용카드의 보안코드입니다.</div>
+				</div>
+				<div class="wpop_btn">
+					<a href="#" class="wbtn_f wbtn_pk cbtn">확인</a>
+				</div>
+			</div>
+		</div>
+		<div class="bg"></div>
+	</div>
+	
+
+
+
+	<script language="javascript" type="text/javascript">footer();</script>
+
+	</div>	<!-- mw_wrap -->
+</body>
+<script type="text/javascript">
+var _dl = {
+	page_name : "메인|로그인|ID/PW,핀로그인,앱로그인",
+	event_name: "",
+    page_event: {
+        event_view: true
+    }
+}
+</script>
+</html>
